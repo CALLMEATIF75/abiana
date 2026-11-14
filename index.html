@@ -249,6 +249,34 @@ nav button.on .ic{filter:none}
 #printArea table.ctlist td.ctn{text-align:center}
 #printArea .ctnum{font-size:14.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
 #printArea .ctblank{display:block;border-bottom:2px dotted #000;min-height:22px;margin:8px 4px 3px}
+
+/* ---------- Patwari Report print — bilingual, uniform table (14 Nov 2026) ----------
+   Bilingual cells (Urdu line + smaller English line), fixed column widths,
+   uniform row height (a min-height on every cell, so a missing number/name
+   never makes a row shorter), repeating thead (global print rule), amounts
+   right-aligned with tabular numerals. NO dotted write-in lines — an empty
+   owner/thekedar cell prints a clean "—" (pw-dash). */
+#printArea table.pw td{padding:5px 6px;vertical-align:middle;height:66px}
+#printArea table.pw th{padding:5px 6px;vertical-align:middle}
+#printArea table.pw td.ctn{text-align:center}
+#printArea table.pw th.num{text-align:right}
+#printArea table.pw td.pw-name{text-align:right}
+#printArea table.pw td.pw-thek{text-align:center}
+#printArea table.pw .urdu{font-size:15px;line-height:1.6}
+#printArea table.pw .pw-en{display:block;font-size:10px;color:#444;line-height:1.3}
+#printArea table.pw th .pw-en{font-size:9.5px;color:#ddd}
+#printArea table.pw td.pw-amt{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+#printArea table.pw .pw-note{font-size:10px;color:#555}
+#printArea table.pw .pw-dash{color:#777}
+#printArea table.pw .ctnum{font-size:13.5px}
+#printArea .pw-sub-en{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+#printArea .pw-head{border:1px solid #000;padding:7px 12px;margin:0 0 8px;text-align:center}
+#printArea .pw-head .pw-nd{font-weight:800}
+#printArea .pw-head .pw-nd .urdu{font-size:15px}
+#printArea .pw-head .pw-nd .pw-en{font-size:11px}
+#printArea .pw-head .pw-eff{margin-top:5px}
+#printArea .pw-head .pw-eff .urdu{font-size:14px;line-height:1.8}
+#printArea .pw-head .pw-eff .pw-en{font-size:10.5px;line-height:1.45}
 </style>
 </head>
 <body>
@@ -371,8 +399,8 @@ nav button.on .ic{filter:none}
       <p class="small mut" style="margin-top:8px">Chowkidar Copy lists <b>only farmers who still owe something</b>, with the Kharif 2025 and Rabi 2026 outstanding amounts and the combined TOTAL for each farmer. Totals include Kharif 2024 / Rabi 2025 dues where noted.</p>
       <button class="btn block" id="pContacts" style="margin-top:16px">📞 Contact Numbers List — Print (Urdu)</button>
       <p class="small mut" style="margin-top:8px">Urdu list of the farmers who still owe money: <b>name, khata no., owner number, thekedar name + number, total baqaya</b>. Jo number save hai wo khud print hoga; khali jagah par haath se number likh sakte ho. Number save karne ke liye kisan ka bill kholo — wahan <b>📞 Contact Numbers</b> wala hissa hai.</p>
-      <button class="btn block gold" id="pPatwari" style="margin-top:16px">📋 Patwari Report — Print (Urdu)</button>
-      <p class="small mut" style="margin-top:8px">Urdu list of <b>ALL farmers who still owe money</b> (number ho ya na ho): <b>name, walidiyat (father), khata no., owner number, thekedar name + number, total baqaya</b>. Khali jagah par number haath se likh sakte ho. Galat (wrong) bills is list mein nahi aate.</p>
+      <button class="btn block gold" id="pPatwari" style="margin-top:16px">📋 Patwari Report — Print (Urdu + English)</button>
+      <p class="small mut" style="margin-top:8px">Bilingual (Urdu + English) list of <b>ALL farmers who still owe money</b> (number ho ya na ho): <b>name, walidiyat (father), khata no., owner number, thekedar name + number, total baqaya</b>. Har naam Urdu aur English dono mein print hota hai; jis ka number save nahi hai us ki jagah '—' aata hai. Galat (wrong) bills is list mein nahi aate.</p>
       <button class="btn block ghost" id="pContactsView">📋 Contact List Screen Par Dekho (tap = call)</button>
     </div>
   </section>
@@ -1888,42 +1916,121 @@ function printContactList(){
     + '<div class="urdu" dir="rtl" style="font-size:16px;margin-top:8px">نوٹ: کل بقایا میں جہاں لاگو ہو، خریف 2024 اور ربیع 2025 کا بقایا بھی شامل ہے۔ خالی جگہ پر نمبر ہاتھ سے لکھا جا سکتا ہے۔</div>';
   doPrint(h, "ur");
 }
+/* ==================== ROMAN→URDU NAME TRANSLITERATOR (Patwari Report, 14 Nov 2026) ===
+   The thekedar name is stored in English only, and a few farmer/father names
+   have no baked Urdu (ur_name/ur_father). This maps the common Roman words
+   of this village's names to Urdu; an unknown word falls back to the original
+   Roman word so the cell never goes blank. Where ur_name/ur_father exists it
+   is used as-is (never transliterated over). */
+var URDU_WORDS = {
+  muhammad:"محمد", ahmed:"احمد", ahmad:"احمد", ali:"علی", hussain:"حسین", husain:"حسین",
+  khan:"خان", yasin:"یاسین", yaseen:"یاسین", ghulam:"غلام", fareed:"فرید", maril:"مرل",
+  arain:"آرائیں", arai:"آرائیں", jutt:"جٹ", jut:"جٹ", ashraf:"اشرف", asghar:"اصغر",
+  rana:"رانا", parvaiz:"پرویز", pervaiz:"پرویز", akram:"اکرم", kamran:"کامران",
+  allah:"اللہ", ditta:"دتہ", saleem:"سلیم", jawala:"جاوالا", javala:"جاوالا",
+  waqas:"وقاص", rashid:"راشد", arshad:"ارشد", irshad:"ارشاد", nazeer:"نذیر",
+  fazal:"فضل", haq:"حق", deen:"دین", din:"دین", ramzan:"رمضان", mughal:"مغل",
+  siddiq:"صدیق", shahbaz:"شہباز", nawaz:"نواز", habib:"حبیب", hafeez:"حفیظ",
+  ullah:"اللہ", lateef:"لطیف", shahid:"شاہد", rasool:"رسول", mohsin:"محسن",
+  aslam:"اسلم", shareef:"شریف", sohrab:"سہراب", korai:"کورائی", jan:"جان",
+  pirhar:"پیرہڑ", gull:"گل", yousaf:"یوسف", yousuf:"یوسف", youasf:"یوسف",
+  abdullah:"عبداللہ", khaliq:"خالق", saeed:"سعید", motan:"موٹان",
+  abdul:"عبد", aziz:"عزیز", anayat:"عنایت", amanullah:"امان اللہ", ashiq:"عاشق",
+  akbar:"اکبر", akhtar:"اختر", ameen:"امین", amjad:"امجد", anwar:"انور", arif:"عارف",
+  asif:"آصف", awan:"اعوان", azeem:"عظیم", bakhsh:"بخش", barkat:"برکت",
+  babar:"بابر", balqees:"بلقیس", bibi:"بی بی", brothers:"برادران", charagh:"چراغ",
+  ejaz:"اعجاز", faisal:"فیصل", general:"جنرل", ghafoor:"غفور", gujjar:"گجر",
+  hameed:"حمید", hashmat:"حشمت", hassu:"حسو", hazoor:"حضور", hakeem:"حکیم",
+  ibrahim:"ابراہیم", iqbal:"اقبال", imran:"عمران", iran:"ایران", ishfaq:"اشفاق",
+  jamal:"جمال", jafar:"جعفر", jam:"جام", javed:"جاوید", jiwana:"جیوانہ",
+  junaid:"جنید", khair:"خیر", kareem:"کریم", kashif:"کاشف", liaquat:"لیاقت",
+  muneer:"منیر", munir:"منیر", mushtaq:"مشتاق", majid:"ماجد", malik:"ملک",
+  mehmood:"محمود", mukhtar:"مختار", nazir:"نذیر", naeem:"نعیم", niaz:"نیاز",
+  qaim:"قائم", qasim:"قاسم", rasheed:"رشید", rehmat:"رحمت", rafiq:"رفیق",
+  raheem:"رحیم", rajpoot:"راجپوت", sardar:"سردار", sarwar:"سرور", shafee:"شفیع",
+  shakoor:"شکور", sadiq:"صادق", safdar:"صفدر", sajjad:"سجاد", shabbir:"شبیر",
+  shafaqat:"شفاقت", shakeel:"شکیل", shoukat:"شوکت", sohail:"سہیل",
+  wali:"ولی", wala:"والا", waris:"وارث", wilayat:"ولایت", yaqoob:"یعقوب",
+  zoja:"زوجہ", zahid:"زاہد", zubair:"زبیر", zulfiqar:"ذوالفقار", and:"اور",
+  ud:"ال", ul:"ال"
+};
+function transliterateName(en){
+  if(!en) return "";
+  var s = String(en).trim();
+  /* "Khair ud Deen" -> خیر الدین ; "Fazal ul Haq" -> فضل الحق (phrase first,
+     so the two words become one Urdu word instead of "ال دین" / "ال حق"). */
+  s = s.replace(/\bud\s+deen\b/gi, "الدین").replace(/\bud\s+din\b/gi, "الدین").replace(/\bul\s+haq\b/gi, "الحق");
+  return s.split(/\s+/).map(function(w){
+    var k = w.toLowerCase().replace(/[^a-z]/g, "");
+    return URDU_WORDS[k] || w;
+  }).join(" ");
+}
+/* Patwari-only bilingual name cell: Urdu line (baked ur_name/ur_father, else
+   transliterated) + smaller English line. Never an English-only name. */
+function pwNameCell(ur, en){
+  var u = ur || transliterateName(en);
+  if(!u && !en) return '<span class="pw-dash">—</span>';
+  return '<span class="urdu">' + esc(u) + '</span><span class="pw-en">' + esc(en || "") + '</span>';
+}
+/* Patwari-only owner-number cell: saved number, else a clean em dash (NO
+   dotted write-in line — contactNumCell keeps its dotted line for the
+   Contact Numbers list). */
+function pwNumCell(num){
+  if(num) return '<span class="ctnum" dir="ltr">' + esc(num) + '</span>';
+  return '<span class="pw-dash">—</span>';
+}
+/* Patwari-only thekedar cell: Urdu transliteration (line 1) + English name
+   (line 2) + number (line 3, LTR); a missing part shows a clean em dash. */
+function pwThekCell(c){
+  if(!c.tkName && !c.thekedar) return '<span class="pw-dash">—</span>';
+  var out = "";
+  if(c.tkName) out += '<span class="urdu">' + esc(transliterateName(c.tkName)) + '</span><span class="pw-en">' + esc(c.tkName) + '</span>';
+  if(c.thekedar) out += '<span class="ctnum" dir="ltr">' + esc(c.thekedar) + '</span>';
+  return out;
+}
 /* ==================== PATWARI REPORT (plain list, 14 Nov 2026) ====================
    NOT an official report — just the farmers' abiana amounts + contact details
-   so the patwari can call them. Plain list only: a simple title with the
-   village + date, the table, and a totals row. NO letterhead, NO addressee,
-   NO covering line/paragraph, NO deadline line, NO name/signature block,
-   NO stamp/signature images (those are receipts only). Wrong bills never
-   appear (farmerTotals -> allBills exclusion). Numbers not saved yet print
-   as dotted write-in lines. */
+   so the patwari can call them. Plain list only: a bilingual title block
+   (village + date), a compact header block with the Numberdar's name and a
+   short collection-efforts note (21 Nov 2026: NO phone number in the report),
+   the table, and a totals row. NO letterhead, NO addressee, NO covering
+   line/paragraph, NO deadline line, NO name/signature block, NO stamp/
+   signature images (those are receipts only). Wrong bills never appear
+   (farmerTotals -> allBills exclusion). Numbers not saved yet print as a
+   clean "—" (no dotted write-in lines in this report). Every name prints
+   in BOTH Urdu and English; the table has fixed column widths and a uniform
+   row height. */
 function printPatwariReport(){
   var rows = farmerTotals();
-  var head = '<div class="rt"><span class="urdu">بقایا آبیانہ — چک نمبر 130/1-L</span></div>'
+  var head = '<div class="rt"><span class="urdu">بقایا آبیانہ — چک نمبر 130/1-L</span><span class="pw-sub-en">Outstanding Abiana — Chak 130/1-L</span></div>'
     + '<div class="urdu" dir="rtl" style="text-align:center;font-size:15px;margin:2px 0">تحصیل خانپور، ضلع رحیم یار خان</div>'
+    + '<div style="text-align:center;font-size:11.5px;margin:2px 0">Tehsil Khanpur, District Rahim Yar Khan</div>'
     + '<div style="text-align:center;font-size:12.5px;margin:0 0 8px">Date: ' + nowDmy() + '</div>';
   if(!rows.length){
     doPrint(head + '<div class="urdu" dir="rtl" style="font-size:18px;text-align:center;margin:26px 0">کوئی بقایا نہیں — سب کسان clear ہیں۔</div>', "ur");
     return;
   }
+  var pwHead = '<div class="pw-head">'
+    + '<div class="pw-nd"><span class="urdu">نمبردار: عاطف — چک 130/1-L</span><span class="pw-en">Numberdar: Atif — Chak 130/1-L</span></div>'
+    + '<div class="pw-eff"><span class="urdu">ان کسانوں کو آبیانہ ادا کرنے کے لیے کئی بار مطلع کیا گیا: فون پر 2–3 بار، مسجد میں اعلان 2–3 بار، بل آنے پر نمبردار کی ذاتی کال، چوکیدار کے ذریعے گھر گھر اطلاع 2–3 بار، اور گاؤں کی دونوں مسجدوں کے باہر نوٹس لگائے گئے۔ اس سب کے باوجود انہوں نے ابھی تک ادا نہیں کیا۔</span><span class="pw-en">These farmers were informed several times to pay their abiana: phone calls 2–3 times, mosque announcements 2–3 times, a personal call by the Numberdar when the bills arrived, door-to-door notice through the chowkidar 2–3 times, and notices posted outside both mosques of the village. Despite all this, they still have not paid.</span></div>'
+    + '</div>';
   var rowsHtml = "", grand = 0;
   rows.forEach(function(g, i){
     var c = getContact(g.khata);
-    var un = g.rep.ur_name || g.rep.name;
-    var uf = g.rep.ur_father || g.rep.father || "";
     grand += g.tot;
     rowsHtml += '<tr><td>' + (i+1) + '</td>'
-      + '<td><span class="urdu">' + esc(un) + '</span></td>'
-      + '<td><span class="urdu">' + esc(uf) + '</span></td>'
+      + '<td class="pw-name">' + pwNameCell(g.rep.ur_name, g.rep.name) + '</td>'
+      + '<td class="pw-name">' + pwNameCell(g.rep.ur_father, g.rep.father) + '</td>'
       + '<td>' + g.khata + '</td>'
-      + '<td class="ctn">' + contactNumCell(c.owner) + '</td>'
-      + '<td class="ctn">' + contactThekCell(c) + '</td>'
-      + '<td class="num bold">' + fmtN(g.tot) + (g.nSeasons > 2 ? chowCountNote(g.nSeasons, "ur") : '') + '</td></tr>';
+      + '<td class="ctn">' + pwNumCell(c.owner) + '</td>'
+      + '<td class="ctn pw-thek">' + pwThekCell(c) + '</td>'
+      + '<td class="num bold pw-amt"><span dir="ltr">' + fmtN(g.tot) + '</span>' + (g.nSeasons > 2 ? '<span class="pw-note" dir="rtl"> · ' + g.nSeasons + ' فصلیں</span>' : '') + '</td></tr>';
   });
-  var h = head
-    + '<table class="ctlist"><colgroup><col style="width:4%"><col style="width:20%"><col style="width:18%"><col style="width:8%"><col style="width:17%"><col style="width:17%"><col style="width:16%"></colgroup>'
-    + '<thead><tr><th>نمبر</th><th>نام</th><th>ولدیت</th><th>کھاتہ نمبر</th><th>مالک کا نمبر</th><th>ٹھیکیدار (نام + نمبر)</th><th class="num">کل بقایا (روپے)</th></tr></thead><tbody>'
+  var h = head + pwHead
+    + '<table class="pw"><colgroup><col style="width:4%"><col style="width:21%"><col style="width:18%"><col style="width:7%"><col style="width:15%"><col style="width:20%"><col style="width:15%"></colgroup>'
+    + '<thead><tr><th>نمبر<span class="pw-en">No.</span></th><th>نام<span class="pw-en">Name</span></th><th>ولدیت<span class="pw-en">Father</span></th><th>کھاتہ نمبر<span class="pw-en">Khata No.</span></th><th>مالک کا نمبر<span class="pw-en">Owner No.</span></th><th>ٹھیکیدار (نام + نمبر)<span class="pw-en">Thekedar (Name + No.)</span></th><th class="num">کل بقایا (روپے)<span class="pw-en">Total Due (Rs)</span></th></tr></thead><tbody>'
     + rowsHtml
-    + '<tr class="tot"><td colspan="6">کل — ' + fmtN(rows.length) + ' کسان</td><td class="num bold">' + fmtN(grand) + '</td></tr>'
+    + '<tr class="tot"><td colspan="6">کل — ' + fmtN(rows.length) + ' کسان<span class="pw-en">Total — ' + fmtN(rows.length) + ' farmers</span></td><td class="num bold">' + fmtN(grand) + '</td></tr>'
     + '</tbody></table>';
   doPrint(h, "ur");
 }
