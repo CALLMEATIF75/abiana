@@ -4,38 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Abiana Manager — Chak No. 130/1-L</title>
-<meta name="theme-color" content="#065f46">
+<meta name="theme-color" content="#16224a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <style>
 :root{
-  --em:#065f46; --em2:#047857; --em3:#064e3b; --em4:#042f24; --gold:#c9a227; --gold2:#d4af37; --gold3:#8a6d14;
-  --bg:#e9f1ec; --card:#ffffff; --ink:#122019; --mut:#5d6f66; --line:#d8e2dc;
+  /* ===== Indigo Ledger — full redesign (14 Nov 2026) =====
+     Deep indigo + warm amber on a warm ivory ground. The legacy
+     --em* / --gold* names are kept as aliases so older inline styles
+     in the script (var(--em2), var(--gold) …) keep working. */
+  --indigo:#22336b; --indigo2:#2e4a8f; --indigo3:#16224a; --indigo4:#101a38;
+  --acc:#d97706; --acc2:#f59e0b; --acc3:#92400e;
+  --bg:#f4f1ea; --card:#ffffff; --ink:#1a2030; --mut:#6b7280; --line:#e2ddd2;
   --green:#15803d; --greenbg:#dcfce7; --amber:#b45309; --amberbg:#fef3c7;
-  --red:#b91c1c; --redbg:#fee2e2; --rad:16px;
+  --red:#b91c1c; --redbg:#fee2e2; --rad:14px;
+  --em:#22336b; --em2:#2e4a8f; --em3:#16224a; --em4:#101a38;
+  --gold:#d97706; --gold2:#f59e0b; --gold3:#92400e;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;background:linear-gradient(180deg,#f5f9f6,#e9f1ec);color:var(--ink);padding-bottom:86px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:86px}
 button{font-family:inherit;cursor:pointer}
 input,select,textarea{font-family:inherit;font-size:16px}
 .urdu{font-family:"Noto Nastaliq Urdu","Segoe UI",serif}
 
 /* ---------- Header ---------- */
-header{position:sticky;top:0;z-index:40;background:linear-gradient(135deg,var(--em2),var(--em3) 55%,var(--em4));color:#fff;padding:12px 14px;box-shadow:0 2px 12px rgba(4,47,36,.35);border-bottom:3px solid var(--gold)}
+header{position:sticky;top:0;z-index:40;background:linear-gradient(135deg,var(--indigo2),var(--indigo3) 55%,var(--indigo4));color:#fff;padding:12px 14px;box-shadow:0 2px 12px rgba(16,26,56,.35);border-bottom:3px solid var(--acc2)}
 header .row{display:flex;align-items:center;gap:10px}
-header .logo{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:22px;border:1.5px solid var(--gold2);flex:0 0 auto}
-header h1{font-size:18px;margin:0;line-height:1.15}
+header .logo{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;border:1.5px solid var(--acc2);flex:0 0 auto}
+header h1{font-size:18px;margin:0;line-height:1.15;letter-spacing:.2px}
 header .sub{font-size:11.5px;opacity:.85;margin-top:1px}
-header select{margin-left:auto;background:#fff;color:var(--em3);border:none;border-radius:9px;padding:8px 6px;font-size:13.5px;font-weight:600;max-width:42vw}
+header select{margin-left:auto;background:#fff;color:var(--indigo3);border:none;border-radius:9px;padding:8px 6px;font-size:13.5px;font-weight:600;max-width:42vw}
 .seasonbar{display:flex;align-items:center;gap:10px;margin-top:10px}
-.seasonbar label{flex:0 0 auto;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gold2)}
-.seasonbar select{flex:1 1 auto;min-width:0;margin:0;max-width:none;background:#fff;color:var(--em3);border:none;border-radius:9px;padding:9px 10px;font-size:16px;font-weight:700}
+.seasonbar label{flex:0 0 auto;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--acc2)}
+.seasonbar select{flex:1 1 auto;min-width:0;margin:0;max-width:none;background:#fff;color:var(--indigo3);border:none;border-radius:9px;padding:9px 10px;font-size:16px;font-weight:700}
 
 /* ---------- Sync pill + lock button (header, always visible) ---------- */
 .lockbtn{margin-left:auto;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:9px;padding:8px 11px;font-weight:700;font-size:13px;white-space:nowrap}
 .lockbtn:active{transform:scale(.97)}
-.syncpill{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:12px;font-weight:700;color:#e9f7ef;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 11px;width:max-content;max-width:100%}
+.syncpill{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:12px;font-weight:700;color:#eef2ff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 11px;width:max-content;max-width:100%}
 .syncpill .dot{width:8px;height:8px;border-radius:50%;background:#34d399;flex:0 0 auto}
 .syncpill.busy .dot{background:#fbbf24;animation:spulse 1s ease-in-out infinite}
 .syncpill.off .dot{background:#f87171}
@@ -45,57 +52,81 @@ header select{margin-left:auto;background:#fff;color:var(--em3);border:none;bord
 main{max-width:760px;margin:0 auto;padding:14px 12px}
 .view{display:none}
 .view.active{display:block;animation:fadein .18s ease}
-@keyframes fadein{from{opacity:0}to{opacity:1}}
-h2.sec{font-size:16px;margin:16px 2px 10px;color:var(--em3)}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+h2.sec{font-size:15px;margin:18px 2px 10px;color:var(--indigo3);letter-spacing:.2px}
 .mut{color:var(--mut)} .small{font-size:12.5px}
 
-/* ---------- Cards ---------- */
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:14px 14px 12px;box-shadow:0 2px 10px rgba(6,78,59,.07);transition:box-shadow .15s}
-.card .lbl{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
-.card .val{font-size:22px;font-weight:800;margin-top:4px;color:var(--em3);font-variant-numeric:tabular-nums}
-.card.gold{background:linear-gradient(135deg,#fffdf4,#fff8e1);border-color:#e8d9a0}
-.card.gold .val{color:var(--gold3)}
-.card.wide{grid-column:1/-1}
-.progress{height:14px;background:#e6ece8;border-radius:99px;overflow:hidden;margin-top:9px}
-.progress>div{height:100%;background:linear-gradient(90deg,var(--em2),var(--gold2));border-radius:99px;transition:width .3s}
-.counts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
-.countbox{border-radius:var(--rad);padding:12px 8px;text-align:center;border:1px solid var(--line)}
-.countbox .n{font-size:22px;font-weight:800}
-.countbox .t{font-size:12px;font-weight:700;margin-top:2px}
-.cb-paid{background:var(--greenbg)} .cb-paid .n{color:var(--green)}
-.cb-part{background:var(--amberbg)} .cb-part .n{color:var(--amber)}
-.cb-unpaid{background:var(--redbg)} .cb-unpaid .n{color:var(--red)}
-.seasoncard{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:var(--rad);padding:12px 14px;margin-bottom:10px}
-.seasoncard h3{margin:0 0 6px;font-size:15px;color:var(--em3)}
-.seasoncard .grid{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
-.seasoncard .grid b{display:block;font-size:15.5px}
+/* ---------- Dashboard hero (command centre) ---------- */
+.hero{background:linear-gradient(135deg,var(--indigo2),var(--indigo3) 60%,var(--indigo4));color:#fff;border-radius:18px;padding:18px 16px 16px;margin-bottom:12px;box-shadow:0 6px 20px rgba(16,26,56,.28);border:1px solid rgba(255,255,255,.08)}
+.hero-top{display:flex;align-items:center;gap:14px}
+.hero-lbl{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--acc2)}
+.hero-amt{font-size:36px;font-weight:800;line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.hero-sub{font-size:12.5px;color:#c7d2f5;margin-top:6px;line-height:1.55}
+.hero-sub b{color:#fff;font-variant-numeric:tabular-nums}
+.ring{margin-left:auto;flex:0 0 auto;width:84px;height:84px;position:relative}
+.ring svg{width:84px;height:84px;transform:rotate(-90deg)}
+.ring .ring-bg{fill:none;stroke:rgba(255,255,255,.18);stroke-width:8}
+.ring .ring-fg{fill:none;stroke:var(--acc2);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .4s ease}
+.ring .ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .ring-txt b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.ring .ring-txt span{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#c7d2f5}
+.progress{height:12px;background:#ece9e0;border-radius:99px;overflow:hidden;margin-top:9px}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--indigo2),var(--acc2));border-radius:99px;transition:width .3s}
+.hero .progress{background:rgba(255,255,255,.18);margin-top:14px}
+.hero .progress>div{background:linear-gradient(90deg,var(--acc2),#fbbf24)}
 
-/* ---------- Deadline banner (dashboard hero) ---------- */
-.deadline{background:linear-gradient(135deg,var(--em3),var(--em4));color:#fff;border-radius:var(--rad);padding:14px 16px;margin-bottom:12px;border:1px solid var(--gold);box-shadow:0 3px 14px rgba(4,47,36,.25);display:flex;align-items:center;gap:14px}
-.deadline .dl-ic{font-size:30px;flex:0 0 auto}
-.deadline .dl-lbl{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--gold2)}
-.deadline .dl-val{font-size:17px;font-weight:800;margin-top:2px}
+/* ---------- Stat tiles ---------- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:13px 14px;box-shadow:0 1px 4px rgba(26,32,48,.06);display:flex;align-items:center;gap:11px}
+.tile-ic{width:38px;height:38px;border-radius:10px;background:#eef2ff;color:var(--indigo2);display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto}
+.tile.t-paid .tile-ic{background:var(--greenbg);color:var(--green)}
+.tile.t-part .tile-ic{background:var(--amberbg);color:var(--amber)}
+.tile.t-unpaid .tile-ic{background:var(--redbg);color:var(--red)}
+.tile-lbl{font-size:11.5px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tile-val{font-size:20px;font-weight:800;color:var(--indigo3);font-variant-numeric:tabular-nums;margin-top:1px}
+
+/* ---------- Deadline card ---------- */
+.deadline{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:var(--rad);padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(26,32,48,.06);display:flex;align-items:center;gap:14px}
+.deadline .dl-ic{font-size:28px;flex:0 0 auto}
+.deadline .dl-lbl{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mut)}
+.deadline .dl-val{font-size:17px;font-weight:800;margin-top:2px;color:var(--indigo3)}
 .deadline .dl-days{margin-left:auto;text-align:right;flex:0 0 auto}
-.deadline .dl-days b{display:block;font-size:26px;font-weight:800;color:var(--gold2);font-variant-numeric:tabular-nums;line-height:1}
-.deadline .dl-days span{font-size:11px;color:#cfe8da;font-weight:700}
-.deadline.passed{opacity:.92}
+.deadline .dl-days b{display:block;font-size:26px;font-weight:800;color:var(--acc3);font-variant-numeric:tabular-nums;line-height:1}
+.deadline .dl-days span{font-size:11px;color:var(--mut);font-weight:700}
+.deadline.passed{border-left-color:var(--red)}
+.deadline.passed .dl-days b{color:var(--red)}
+
+/* ---------- Season progress cards ---------- */
+.seasoncard{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:13px 14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(26,32,48,.05)}
+.seasoncard h3{margin:0 0 4px;font-size:15px;color:var(--indigo3)}
+.seasoncard .sp-sub{font-size:12.5px;color:var(--mut);margin-bottom:8px}
+.seasoncard .sp-sub b{color:var(--ink);font-variant-numeric:tabular-nums}
+.sp-bar{height:10px;background:#ece9e0;border-radius:99px;overflow:hidden}
+.sp-bar>div{height:100%;background:linear-gradient(90deg,var(--indigo2),var(--acc2));border-radius:99px;transition:width .3s}
+.seasoncard .grid{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-top:9px}
+.seasoncard .grid b{display:block;font-size:15px;color:var(--indigo3)}
+
+/* ---------- Quick actions ---------- */
+.qa{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.qa-btn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 6px;font-size:12.5px;font-weight:700;color:var(--indigo3);box-shadow:0 1px 4px rgba(26,32,48,.05);transition:transform .12s}
+.qa-btn:active{transform:scale(.97)}
 
 /* ---------- Lists ---------- */
-.farmer{display:flex;gap:11px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--rad);padding:11px 12px;margin-bottom:9px;align-items:flex-start;cursor:pointer;transition:box-shadow .15s}
+.farmer{display:flex;gap:11px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--rad);padding:12px;margin-bottom:9px;align-items:flex-start;cursor:pointer;box-shadow:0 1px 4px rgba(26,32,48,.05);transition:box-shadow .15s,transform .12s}
 .farmer:active{transform:scale(.995)}
 .farmer.st-Paid{border-left-color:var(--green)}
 .farmer.st-Partial{border-left-color:var(--amber)}
 .farmer.st-Unpaid{border-left-color:var(--red)}
-.khata{flex:0 0 auto;background:var(--em);color:#fff;border-radius:10px;min-width:46px;text-align:center;padding:7px 4px}
+.khata{flex:0 0 auto;background:var(--indigo);color:#fff;border-radius:10px;min-width:48px;text-align:center;padding:7px 4px}
 .khata .k{font-size:9.5px;letter-spacing:.6px;opacity:.85;font-weight:700}
 .khata .n{font-size:16.5px;font-weight:800;line-height:1.1}
 .farmer .info{flex:1;min-width:0}
 .farmer .nm{font-weight:700;font-size:15px}
-.farmer .urnm{font-size:15.5px;color:var(--em3);line-height:1.9;margin-top:1px}
+.farmer .urnm{font-size:15.5px;color:var(--indigo2);line-height:1.9;margin-top:1px}
 .farmer .fa{font-size:12.5px;color:var(--mut)}
 .farmer .amts{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;margin-top:5px}
-.farmer .amts span b{font-size:13.5px}
+.farmer .amts span b{font-size:13.5px;font-variant-numeric:tabular-nums}
+.seasonchip{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;letter-spacing:.3px;background:#eef2ff;color:var(--indigo2);vertical-align:middle;margin-left:6px}
 .pill{flex:0 0 auto;font-size:11px;font-weight:800;padding:4px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.3px}
 .kindtag{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;letter-spacing:.3px;text-transform:uppercase;vertical-align:middle;margin-left:6px}
 .kindtag.paid{background:var(--greenbg);color:var(--green)}
@@ -103,65 +134,71 @@ h2.sec{font-size:16px;margin:16px 2px 10px;color:var(--em3)}
 .pill.Paid{background:var(--greenbg);color:var(--green)}
 .pill.Partial{background:var(--amberbg);color:var(--amber)}
 .pill.Unpaid{background:var(--redbg);color:var(--red)}
-.seasonhead{font-weight:800;color:var(--em3);margin:16px 2px 9px;font-size:14.5px;border-bottom:2px solid var(--gold);padding-bottom:5px}
-.recent{display:flex;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13.5px}
-.recent .amt{font-weight:800;color:var(--em2);white-space:nowrap}
+.recent{display:flex;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13.5px;box-shadow:0 1px 3px rgba(26,32,48,.04)}
+.recent .amt{font-weight:800;color:var(--indigo2);white-space:nowrap;font-variant-numeric:tabular-nums}
 .empty{background:var(--card);border:1px dashed var(--line);border-radius:var(--rad);padding:22px;text-align:center;color:var(--mut)}
 
-/* ---------- Search & chips ---------- */
+/* ---------- Search, chips & sort ---------- */
 .searchwrap{position:sticky;top:74px;z-index:30;background:var(--bg);padding:2px 0 8px}
-.searchwrap input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;outline:none}
-.searchwrap input:focus{border-color:var(--em2)}
-.chips{display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 4px}
+.searchwrap input{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;outline:none;box-shadow:0 1px 4px rgba(26,32,48,.05)}
+.searchwrap input:focus{border-color:var(--indigo2)}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 4px}
 .chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--mut)}
-.chip.on{background:var(--em);color:#fff;border-color:var(--em)}
+.chip.on{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+.sortrow{display:flex;align-items:center;gap:8px;margin:6px 0 2px}
+.sortrow label{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+.sortrow select{flex:1;border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:8px 10px;font-size:14px;font-weight:600;color:var(--indigo3);outline:none}
 
 /* ---------- Buttons & forms ---------- */
-.btn{display:inline-block;border:none;border-radius:11px;padding:12px 18px;font-size:14.5px;font-weight:700;background:var(--em);color:#fff}
+.btn{display:inline-block;border:none;border-radius:11px;padding:12px 18px;font-size:14.5px;font-weight:700;background:var(--indigo);color:#fff;transition:transform .12s}
 .btn:active{transform:scale(.98)}
-.btn.gold{background:var(--gold);color:#231a02}
-.btn.ghost{background:#fff;color:var(--em3);border:1.5px solid var(--line)}
+.btn.gold{background:var(--acc2);color:#231a02}
+.btn.ghost{background:#fff;color:var(--indigo3);border:1.5px solid var(--line)}
 .btn.red{background:var(--red)}
 .btn.sm{padding:8px 12px;font-size:13px;border-radius:9px}
 .btn.block{display:block;width:100%;text-align:center;margin-top:10px}
 .fld{margin-bottom:12px}
 .fld label{display:block;font-size:12.5px;font-weight:700;color:var(--mut);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
 .fld input,.fld select,.fld textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:11px;background:#fff;outline:none}
-.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--em2)}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:16px 14px;margin-bottom:12px}
-.panel h3{margin:0 0 10px;font-size:15px;color:var(--em3)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--indigo2)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:16px 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(26,32,48,.05)}
+.panel h3{margin:0 0 10px;font-size:15px;color:var(--indigo3)}
+/* Receipt-style bill card (detail view): a clear top rule + eyebrow label,
+   so the bill reads like a receipt, not a plain settings panel. */
+.billcard{border-top:4px solid var(--acc2)}
+.billcard-eyebrow{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--acc3);margin-bottom:6px}
 
 /* ---------- Bottom nav ---------- */
 nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--line);display:flex;box-shadow:0 -2px 12px rgba(0,0,0,.07);padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;background:none;border:none;padding:9px 2px 8px;font-size:11px;font-weight:700;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button .ic{font-size:20px;line-height:1}
-nav button.on{color:var(--em2);box-shadow:inset 0 3px 0 var(--gold)}
+nav button.on{color:var(--indigo2);box-shadow:inset 0 3px 0 var(--acc2)}
 nav button.on .ic{filter:none}
 
 /* ---------- Overlays (detail / add bill / lock) ---------- */
 .overlay{position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;display:none}
 .overlay.open{display:block}
-.overlay .topbar{position:sticky;top:0;background:linear-gradient(135deg,var(--em2),var(--em3));color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--gold);z-index:5}
+.overlay .topbar{position:sticky;top:0;background:linear-gradient(135deg,var(--indigo2),var(--indigo3));color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--acc2);z-index:5}
 .overlay .topbar .ttl{font-weight:800;font-size:16px}
 .overlay .body{max-width:760px;margin:0 auto;padding:14px 12px 40px}
 .backbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:9px;padding:7px 12px;font-weight:700}
 .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .kv span:first-child{color:var(--mut)}
-.kv span:last-child{font-weight:700;text-align:right}
+.kv span:last-child{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 .payrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
-.payrow .pa{font-weight:800;color:var(--em2)}
+.payrow .pa{font-weight:800;color:var(--indigo2);font-variant-numeric:tabular-nums}
 .payrow .acts{display:flex;gap:6px}
 .iconbtn{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:5px 9px;font-size:12.5px;font-weight:700}
-#lockScreen{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,var(--em2),var(--em3));display:none;align-items:center;justify-content:center;padding:20px}
+#lockScreen{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,var(--indigo2),var(--indigo3));display:none;align-items:center;justify-content:center;padding:20px}
 #lockScreen.open{display:flex}
-.lockbox{background:#fff;border-radius:20px;padding:26px 22px;width:100%;max-width:360px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35);border-top:5px solid var(--gold)}
+.lockbox{background:#fff;border-radius:20px;padding:26px 22px;width:100%;max-width:360px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35);border-top:5px solid var(--acc2)}
 .lockbox .drop{font-size:44px}
-.lockbox h2{margin:8px 0 2px;color:var(--em3);font-size:20px}
+.lockbox h2{margin:8px 0 2px;color:var(--indigo3);font-size:20px}
 .lockbox p{color:var(--mut);font-size:13px;margin:4px 0 16px}
 .lockbox input{width:100%;text-align:center;font-size:22px;letter-spacing:8px;padding:12px;border:1.5px solid var(--line);border-radius:12px;margin-bottom:10px;outline:none}
-.lockbox input:focus{border-color:var(--em2)}
+.lockbox input:focus{border-color:var(--indigo2)}
 .lockmsg{color:var(--red);font-size:13px;min-height:18px;font-weight:600}
-.fab{position:fixed;right:16px;bottom:96px;z-index:60;width:56px;height:56px;border-radius:50%;background:var(--gold);color:#231a02;border:none;font-size:28px;font-weight:800;box-shadow:0 6px 18px rgba(0,0,0,.28);display:none}
+.fab{position:fixed;right:16px;bottom:96px;z-index:60;width:56px;height:56px;border-radius:50%;background:var(--acc2);color:#231a02;border:none;font-size:28px;font-weight:800;box-shadow:0 6px 18px rgba(0,0,0,.28);display:none}
 .fab.show{display:block}
 
 /* ---------- Print ---------- */
@@ -250,34 +287,45 @@ nav button.on .ic{filter:none}
 #printArea .ctnum{font-size:14.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
 #printArea .ctblank{display:block;border-bottom:2px dotted #000;min-height:22px;margin:8px 4px 3px}
 
-/* ---------- Patwari Report print — bilingual, uniform table (14 Nov 2026) ----------
-   Bilingual cells (Urdu line + smaller English line), fixed column widths,
-   uniform row height (a min-height on every cell, so a missing number/name
-   never makes a row shorter), repeating thead (global print rule), amounts
-   right-aligned with tabular numerals. NO dotted write-in lines — an empty
-   owner/thekedar cell prints a clean "—" (pw-dash). */
-#printArea table.pw td{padding:5px 6px;vertical-align:middle;height:66px}
-#printArea table.pw th{padding:5px 6px;vertical-align:middle}
-#printArea table.pw td.ctn{text-align:center}
-#printArea table.pw th.num{text-align:right}
-#printArea table.pw td.pw-name{text-align:right}
-#printArea table.pw td.pw-thek{text-align:center}
-#printArea table.pw .urdu{font-size:15px;line-height:1.6}
-#printArea table.pw .pw-en{display:block;font-size:10px;color:#444;line-height:1.3}
-#printArea table.pw th .pw-en{font-size:9.5px;color:#ddd}
-#printArea table.pw td.pw-amt{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
-#printArea table.pw .pw-note{font-size:10px;color:#555}
-#printArea table.pw .pw-dash{color:#777}
-#printArea table.pw .ctnum{font-size:13.5px}
-#printArea .pw-sub-en{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
-#printArea .pw-head{border:1px solid #000;padding:7px 12px;margin:0 0 8px;text-align:center}
-#printArea .pw-head .pw-nd{font-weight:800}
-#printArea .pw-head .pw-nd .urdu{font-size:15px}
-#printArea .pw-head .pw-nd .pw-en{font-size:11px}
-#printArea .pw-head .pw-eff{margin-top:5px}
-#printArea .pw-head .pw-eff .urdu{font-size:14px;line-height:1.8}
-#printArea .pw-head .pw-eff .pw-en{font-size:10.5px;line-height:1.45}
+/* ---------- Patwari Report print — professional register (14 Nov 2026) ----------
+   Language-separated by the Print Centre Language selection: one complete
+   table per language — Urdu-only, English-only, or (Bilingual) a full Urdu
+   table followed by a full English table on a fresh page. NEVER two
+   languages in one cell or one line. Each language block is isolated with
+   its own dir so no bidi collision can occur. Clean professional table:
+   dark slate header, clear 1px grid, zebra rows, generous padding, amounts
+   right-aligned with tabular numerals. The season count is its OWN column
+   ("Seasons" / "فصلیں") — never appended to an amount. Empty cells print
+   a clean "—" (pw2-dash). NO phone number anywhere in the report. */
+#printArea .pw2-doc{margin-bottom:6px}
+#printArea .pw2-title{text-align:center;border-bottom:3px double #000;padding-bottom:8px;margin-bottom:10px}
+#printArea .pw2-t1{font-size:19px;font-weight:800;letter-spacing:.3px}
+#printArea .pw2-t1.urdu{font-size:24px;line-height:1.9}
+#printArea .pw2-t2{font-size:13px;margin-top:3px;color:#222}
+#printArea .pw2-t2.urdu{font-size:17px;line-height:1.8}
+#printArea .pw2-t3{font-size:12px;margin-top:4px;color:#333}
+#printArea .pw2-t3.urdu{font-size:15px;line-height:1.8}
+#printArea .pw2-head{border:1.5px solid #000;padding:9px 13px;margin:0 0 10px;background:#f7f8fa;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#printArea .pw2-nd{font-weight:800;font-size:13.5px;text-align:center}
+#printArea .pw2-nd.urdu{font-size:17px;line-height:1.8}
+#printArea .pw2-eff{margin-top:6px;font-size:12px;line-height:1.6;text-align:justify}
+#printArea .pw2-eff.urdu{font-size:15px;line-height:1.9}
+#printArea table.pw2 td{padding:8px 7px;vertical-align:middle}
+#printArea table.pw2 th{padding:9px 7px;vertical-align:middle;background:#24304d;border-color:#24304d;color:#fff;font-size:11.5px}
+#printArea table.pw2 td.ctn{text-align:center}
+#printArea table.pw2 th.num{text-align:right}
+#printArea table.pw2 td.pw2-name{text-align:right}
+#printArea table.pw2 td.pw2-thek{text-align:center}
+#printArea table.pw2 td.pw2-seas{text-align:center;font-weight:700}
+#printArea table.pw2 th.pw2-seas{text-align:center}
+#printArea table.pw2 tbody tr:nth-child(even) td{background:#f7f8fa;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#printArea table.pw2 .urdu{font-size:16px;line-height:1.7}
+#printArea table.pw2 td.pw2-amt{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+#printArea table.pw2 .pw2-dash{color:#777}
+#printArea table.pw2 .ctnum{font-size:13.5px}
+#printArea table.pw2 tr.tot td{background:#e9ebf0;border-top:3px double #000}
 </style>
+
 </head>
 <body>
 
@@ -299,7 +347,7 @@ nav button.on .ic{filter:none}
 <!-- ================= APP SHELL ================= -->
 <header>
   <div class="row">
-    <div class="logo">💧</div>
+    <div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5C12 2.5 5.5 10 5.5 15a6.5 6.5 0 0 0 13 0C18.5 10 12 2.5 12 2.5Z" fill="#f59e0b"/></svg></div>
     <div>
       <h1>Abiana Manager</h1>
       <div class="sub">Muhammad Atif · Numberdar · Chak 130/1-L</div>
@@ -321,29 +369,41 @@ nav button.on .ic{filter:none}
 <main>
   <!-- ======== DASHBOARD ======== -->
   <section class="view active" id="view-dashboard">
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="hero-lbl">Outstanding — Total Baqaya</div>
+          <div class="hero-amt" id="dRem">—</div>
+          <div class="hero-sub">Total <b id="dTotal">—</b> &nbsp;·&nbsp; Collected <b id="dPaas">—</b> &nbsp;·&nbsp; Deposited <b id="dJama">—</b></div>
+        </div>
+        <div class="ring">
+          <svg viewBox="0 0 84 84" aria-hidden="true"><circle class="ring-bg" cx="42" cy="42" r="34"/><circle class="ring-fg" id="dRingFg" cx="42" cy="42" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg>
+          <div class="ring-txt"><b id="dPct">0%</b><span>Collected</span></div>
+        </div>
+      </div>
+      <div class="progress"><div id="dProg" style="width:0%"></div></div>
+    </div>
     <div class="deadline" id="deadlineCard">
       <div class="dl-ic">📅</div>
       <div><div class="dl-lbl">Rabi 2026 — Last Date</div><div class="dl-val" id="dDeadline">17 November 2026</div></div>
       <div class="dl-days"><b id="dDeadlineDays">—</b><span id="dDeadlineDaysLbl">days left</span></div>
     </div>
-    <div class="cards">
-      <div class="card"><div class="lbl">Total Abiana</div><div class="val" id="dTotal">—</div></div>
-      <div class="card"><div class="lbl">Paid (Deposited)</div><div class="val" id="dJama">—</div></div>
-      <div class="card"><div class="lbl">Collected (With Numberdar)</div><div class="val" id="dPaas">—</div></div>
-      <div class="card gold"><div class="lbl">Outstanding</div><div class="val" id="dRem">—</div></div>
-      <div class="card"><div class="lbl">Farmers / Bills</div><div class="val" id="dCount">—</div></div>
-      <div class="card wide">
-        <div class="lbl">Collection Progress — <span id="dPct">0%</span></div>
-        <div class="progress"><div id="dProg" style="width:0%"></div></div>
-      </div>
+    <div class="tiles">
+      <div class="tile"><div class="tile-ic">👨‍🌾</div><div><div class="tile-lbl">Farmers / Bills</div><div class="tile-val" id="dCount">—</div></div></div>
+      <div class="tile t-paid"><div class="tile-ic">✓</div><div><div class="tile-lbl">Paid</div><div class="tile-val" id="dPaid">0</div></div></div>
+      <div class="tile t-part"><div class="tile-ic">◐</div><div><div class="tile-lbl">Partial</div><div class="tile-val" id="dPartial">0</div></div></div>
+      <div class="tile t-unpaid"><div class="tile-ic">✗</div><div><div class="tile-lbl">Unpaid</div><div class="tile-val" id="dUnpaid">0</div></div></div>
     </div>
-    <div class="counts">
-      <div class="countbox cb-paid"><div class="n" id="dPaid">0</div><div class="t">✓ Paid</div></div>
-      <div class="countbox cb-part"><div class="n" id="dPartial">0</div><div class="t">◐ Partial</div></div>
-      <div class="countbox cb-unpaid"><div class="n" id="dUnpaid">0</div><div class="t">✗ Unpaid</div></div>
-    </div>
-    <h2 class="sec">Season Summary</h2>
+    <h2 class="sec">⚠ Needs Attention — Largest Baqaya</h2>
+    <div id="topDefaulters"></div>
+    <h2 class="sec">Season Progress</h2>
     <div id="seasonCards"></div>
+    <h2 class="sec">Quick Actions</h2>
+    <div class="qa">
+      <button class="qa-btn" onclick="switchView('farmers')">🔍 Search Farmers</button>
+      <button class="qa-btn" onclick="switchView('print')">🖨 Print Centre</button>
+      <button class="qa-btn" onclick="switchView('contacts')">📞 Contacts</button>
+    </div>
     <h2 class="sec">Recent Payments</h2>
     <div id="recentList"></div>
   </section>
@@ -358,6 +418,14 @@ nav button.on .ic{filter:none}
         <button class="chip" data-f="Partial">Partial</button>
         <button class="chip" data-f="Unpaid">Unpaid</button>
       </div>
+      <div class="sortrow">
+        <label for="sortSelect">Sort</label>
+        <select id="sortSelect">
+          <option value="largest">Largest baqaya first</option>
+          <option value="name">Name (A–Z)</option>
+          <option value="khata">Khata No.</option>
+        </select>
+      </div>
       <div class="small mut" id="farmersCount"></div>
     </div>
     <div id="farmersList"></div>
@@ -370,19 +438,22 @@ nav button.on .ic{filter:none}
       <div class="fld">
         <label>Season</label>
         <select id="pSeason">
-          <option value="kharif2024">Kharif 2024</option>
-          <option value="rabi2025">Rabi 2025</option>
-          <option value="kharif2025">Kharif 2025</option>
+          <option value="all">All Outstanding (all seasons)</option>
           <option value="rabi2026">Rabi 2026</option>
+          <option value="kharif2025">Kharif 2025</option>
+          <option value="rabi2025">Rabi 2025</option>
+          <option value="kharif2024">Kharif 2024</option>
         </select>
       </div>
       <div class="fld">
         <label>Report Type</label>
         <select id="pType">
+          <option value="patwari">Patwari Report</option>
+          <option value="chowkidar">Chowkidar Copy</option>
+          <option value="unpaid">Unpaid List</option>
           <option value="paid">Paid List</option>
-          <option value="unpaid">Outstanding Abiana List (unpaid &amp; partial)</option>
-          <option value="complete">Complete List</option>
-          <option value="summary">Season Summary</option>
+          <option value="contact">Contact Numbers List</option>
+          <option value="personal">Personal Record (all farmers)</option>
         </select>
       </div>
       <div class="fld">
@@ -393,22 +464,15 @@ nav button.on .ic{filter:none}
           <option value="ur">Urdu</option>
         </select>
       </div>
-      <button class="btn block" id="pGo">Print / Save PDF</button>
-      <p class="small mut" style="margin-top:10px">The selected language also applies to farmer receipts. In the print dialog you can print on paper or “Save as PDF”.</p>
-      <button class="btn block gold" id="pChowk">🖨 Chowkidar Copy</button>
-      <p class="small mut" style="margin-top:8px">Chowkidar Copy lists <b>only farmers who still owe something</b>, with the Kharif 2025 and Rabi 2026 outstanding amounts and the combined TOTAL for each farmer. Totals include Kharif 2024 / Rabi 2025 dues where noted.</p>
-      <button class="btn block" id="pContacts" style="margin-top:16px">📞 Contact Numbers List — Print (Urdu)</button>
-      <p class="small mut" style="margin-top:8px">Urdu list of the farmers who still owe money: <b>name, khata no., owner number, thekedar name + number, total baqaya</b>. Jo number save hai wo khud print hoga; khali jagah par haath se number likh sakte ho. Number save karne ke liye kisan ka bill kholo — wahan <b>📞 Contact Numbers</b> wala hissa hai.</p>
-      <button class="btn block gold" id="pPatwari" style="margin-top:16px">📋 Patwari Report — Print (Urdu + English)</button>
-      <p class="small mut" style="margin-top:8px">Bilingual (Urdu + English) list of <b>ALL farmers who still owe money</b> (number ho ya na ho): <b>name, walidiyat (father), khata no., owner number, thekedar name + number, total baqaya</b>. Har naam Urdu aur English dono mein print hota hai; jis ka number save nahi hai us ki jagah '—' aata hai. Galat (wrong) bills is list mein nahi aate.</p>
-      <button class="btn block ghost" id="pContactsView">📋 Contact List Screen Par Dekho (tap = call)</button>
+      <button class="btn block gold" id="pGo">🖨 Print / Save PDF</button>
+      <p class="small mut" style="margin-top:10px">One form, one button. Pick the season, the report and the language, then print on paper or “Save as PDF”. The Patwari Report follows the language you pick here: Urdu prints the whole report in Urdu, English prints it in English, and Bilingual prints a complete Urdu table followed by a complete English table.</p>
     </div>
   </section>
 
   <!-- ======== CONTACTS ======== -->
   <section class="view" id="view-contacts">
-    <h2 class="sec">📞 رابطہ نمبرز — Contact Numbers (Baqaya Wale Kisan)</h2>
-    <p class="small mut" style="margin:2px 2px 10px">Sirf woh kisan jin ka baqaya baqi hai. Number par tap karne se call lag jayegi. Kisi kisan par baqi jagah tap karne se us ka bill khul jayega — number wahan <b>📞 Contact Numbers</b> wale hisse mein likha jata hai.</p>
+    <h2 class="sec">📞 Contact Numbers — Farmers Who Still Owe</h2>
+    <p class="small mut" style="margin:2px 2px 10px">Only farmers who still owe something. Tap a number to call. Tap anywhere else on a farmer to open their bill — numbers are saved in the <b>📞 Contact Numbers</b> section of the bill.</p>
     <div id="contactsList"></div>
     <button class="btn block" id="cPrintBtn" style="margin-top:6px">🖨 Print Contact List (Urdu)</button>
   </section>
@@ -1001,18 +1065,42 @@ function renderDashboard(){
   $("dCount").textContent = fmtN(st.bills.length);
   $("dPct").textContent = st.pct + "%";
   $("dProg").style.width = Math.min(100, st.pct) + "%";
+  /* Collection ring (full redesign): circumference of r=34 is 213.6. */
+  var rf = $("dRingFg");
+  if(rf) rf.style.strokeDashoffset = (213.6 * (1 - Math.min(100, st.pct) / 100)).toFixed(1);
   $("dPaid").textContent = st.paid; $("dPartial").textContent = st.partial; $("dUnpaid").textContent = st.unpaid;
   /* Deadline countdown (enhancement, 14 Nov 2026): Rabi 2026 last date 17 Nov 2026. */
   var dl = deadlineDaysLeft();
   $("dDeadlineDays").textContent = dl.days;
   $("dDeadlineDaysLbl").textContent = dl.label;
   $("deadlineCard").classList.toggle("passed", dl.overdue);
+  /* Needs Attention — the largest outstanding dues first (top 5 farmers,
+     all seasons combined; tap a row to open that farmer's bill). */
+  var top = farmerTotals().slice().sort(function(a,b){ return b.tot - a.tot; }).slice(0,5);
+  if(!top.length){ $("topDefaulters").innerHTML = '<div class="empty">No outstanding dues — every farmer is clear ✓</div>'; }
+  else {
+    $("topDefaulters").innerHTML = top.map(function(g){
+      var b = g.rep, st2 = statusOf(b);
+      if(st2 === "Paid") st2 = "Partial"; /* latest bill paid, an older season is still owed */
+      return '<div class="farmer st-' + st2 + '" data-sid="' + b.season_id + '" data-khata="' + b.khata + '" data-pkey="' + esc(String(payKey(b))) + '">'
+        + '<div class="khata"><div class="k">KHATA</div><div class="n">' + b.khata + '</div></div>'
+        + '<div class="info"><div class="nm">' + esc(b.name) + '</div>'
+        + '<div class="fa">s/o ' + esc(b.father||"") + ' · ' + g.nSeasons + (g.nSeasons===1 ? ' season' : ' seasons') + ' outstanding</div>'
+        + '<div class="amts"><span>Total Baqaya <b style="color:var(--red)">' + fmt(g.tot) + '</b></span></div></div>'
+        + '<span class="pill ' + st2 + '">' + st2 + '</span></div>';
+    }).join("");
+    bindFarmerRows($("topDefaulters"));
+  }
+  /* Per-season progress: collected vs outstanding for each season. */
   var sc = "";
   [seasonFilter].forEach(function(sid){
     var s = seasonStats(sid);
+    var done = s.total ? (s.jama + s.paas) : 0;
     sc += '<div class="seasoncard"><h3>' + esc(SEASONS[sid].label) + '</h3>'
+      + '<div class="sp-sub"><b>' + fmt(done) + '</b> collected of <b>' + fmt(s.total) + '</b> total · <b>' + fmt(s.rem) + '</b> outstanding · ' + s.pct + '% done</div>'
+      + '<div class="sp-bar"><div style="width:' + Math.min(100, s.pct) + '%"></div></div>'
       + '<div class="grid"><div>Bills<b>' + fmtN(s.bills.length) + '</b></div><div>Total<b>' + fmt(s.total) + '</b></div>'
-      + '<div>Paid (Deposited)<b>' + fmt(s.jama) + '</b></div><div>Collected (With Numberdar)<b>' + fmt(s.paas) + '</b></div><div>Outstanding<b>' + fmt(s.rem) + '</b></div>' + (seasonLastDate(sid) ? '<div>Last Date<b>' + seasonLastDate(sid) + '</b></div>' : '') + '<div>Done<b>' + s.pct + '%</b></div></div></div>';
+      + '<div>Paid (Deposited)<b>' + fmt(s.jama) + '</b></div><div>Collected (With Numberdar)<b>' + fmt(s.paas) + '</b></div><div>Outstanding<b>' + fmt(s.rem) + '</b></div>' + (seasonLastDate(sid) ? '<div>Last Date<b>' + seasonLastDate(sid) + '</b></div>' : '') + '</div></div>';
   });
   $("seasonCards").innerHTML = sc;
   var all = [];
@@ -1033,6 +1121,10 @@ for(var ci=0; ci<chips.length; ci++){ (function(ch){ ch.addEventListener("click"
   statusFilter = ch.getAttribute("data-f"); renderFarmers();
 }); })(chips[ci]); }
 
+/* Sort (full redesign): largest baqaya first, by name, or by khata. */
+var sortMode = "largest";
+$("sortSelect").addEventListener("change", function(){ sortMode = this.value; renderFarmers(); });
+
 function matchSearch(b){
   if(!searchQuery) return true;
   var hay = [b.name, b.father, b.ur_name, b.ur_father, String(b.khata), String(b.cons||"")].join(" ").toLowerCase();
@@ -1044,7 +1136,7 @@ function farmerRow(b){
     + '<div class="khata"><div class="k">KHATA</div><div class="n">' + b.khata + '</div></div>'
     + '<div class="info"><div class="nm">' + esc(b.name) + (b.seeded ? ' <span style="font-size:11px;color:#b3261e;font-weight:700">[Baqaya bill]</span>' : '') + '</div>'
     + (b.ur_name ? '<div class="urnm urdu">' + esc(b.ur_name) + '</div>' : '')
-    + '<div class="fa">s/o ' + esc(b.father||"") + ' · ' + areaStr(b) + ' · ' + esc(SEASONS[b.season_id].label) + '</div>'
+    + '<div class="fa">s/o ' + esc(b.father||"") + ' · ' + areaStr(b) + '<span class="seasonchip">' + esc(SEASONS[b.season_id].label) + '</span></div>'
     + '<div class="amts"><span>Bill <b>' + fmt(effAmt(b)) + '</b></span><span>Paid <b style="color:var(--em2)">' + fmt(paid) + '</b></span>' + (rem>0 ? '<span>Remaining <b style="color:var(--red)">' + fmt(rem) + '</b></span>' : '') + '</div></div>'
     + '<span class="pill ' + st + '">' + st + '</span></div>';
 }
@@ -1064,6 +1156,9 @@ function renderFarmers(){
   var seasonsToShow = [seasonFilter];
   seasonsToShow.forEach(function(sid){
     var bs = billsFor(sid).filter(function(b){ return matchSearch(b) && (statusFilter==="All" || statusOf(b)===statusFilter); });
+    if(sortMode==="largest") bs.sort(function(a,b){ return remaining(b) - remaining(a); });
+    else if(sortMode==="name") bs.sort(function(a,b){ return String(a.name).localeCompare(String(b.name)); });
+    else bs.sort(function(a,b){ return a.khata - b.khata; });
     html += bs.map(farmerRow).join("");
     total += bs.length;
   });
@@ -1108,7 +1203,7 @@ function renderDetail(){
   var b = currentBill; if(!b) return;
   var st = statusOf(b), paid = paidCapped(b), raw = paidRaw(b), rem = remaining(b), pays = getPays(b);
   var h = "";
-  h += '<div class="panel"><h3 style="margin-bottom:2px">' + esc(b.name) + '</h3>'
+  h += '<div class="panel billcard"><div class="billcard-eyebrow">Abiana Bill · ' + esc(SEASONS[b.season_id].label) + '</div><h3 style="margin-bottom:2px">' + esc(b.name) + '</h3>'
      + (b.ur_name ? '<div class="urdu" style="font-size:21px;line-height:1.9;color:var(--em3)">' + esc(b.ur_name) + '</div>' : '')
      + '<div class="kv"><span>Father</span><span>' + esc(b.father||"") + (b.ur_father ? ' · <span class="urdu">' + esc(b.ur_father) + '</span>' : '') + '</span></div>'
      + '<div class="kv"><span>Season</span><span>' + esc(SEASONS[b.season_id].label) + '</span></div>'
@@ -1584,7 +1679,7 @@ $("pullBtn").addEventListener("click", function(){ pullContacts(true); });
 /* ==================== PRINTING ==================== */
 var LBL = {
   en:{ sr:"Sr", khata:"Khata", farmer:"Farmer", father:"Father", area:"Area (K-M)", bill:"Bill (Rs)", paid:"Paid (Rs)", rem:"Remaining (Rs)", status:"Status",
-       paidT:"Paid List", unpaidT:"Outstanding Abiana List", completeT:"Complete List", summaryT:"Season Summary",
+       paidT:"Paid List", unpaidT:"Outstanding Abiana List", completeT:"Complete List", personalT:"Personal Record", summaryT:"Season Summary",
        jama:"Paid — Jama (Rs)", paas:"Collected — Mere Paas (Rs)", baq:"Baqaya (Rs)", farmers:"Total Farmers",
        Paid:"Paid", Partial:"Partial", Unpaid:"Unpaid", receipt:"Payment Receipt", season:"Season", date:"Print Date",
        total:"TOTAL", bills:"Bills", collected:"Collected", remainingL:"Remaining", pct:"Collection %",
@@ -1594,7 +1689,7 @@ var LBL = {
        lastdate:"Last Date", kharifB:"Kharif 2025 Baqaya (Rs)", rabiB:"Rabi 2026 Baqaya (Rs)", totB:"TOTAL Baqaya (Rs)",
        billT:"ABIANA BILL", paidtodate:"Paid to Date", remL:"Remaining to Pay", lastpay:"Last date for payment: 17 November 2026", paynote:"Please pay by the last date.", psid:"PSID", psidManual:"Manual Collection" },
   ur:{ sr:"نمبر", khata:"کھاتہ", farmer:"کسان", father:"والد", area:"رقبہ (کنال-مرلہ)", bill:"بل (روپے)", paid:"ادا شدہ (روپے)", rem:"بقایا (روپے)", status:"حالت",
-       paidT:"ادا شدہ فہرست", unpaidT:"بقایا آبیانہ کی فہرست", completeT:"مکمل فہرست", summaryT:"سیزن خلاصہ",
+       paidT:"ادا شدہ فہرست", unpaidT:"بقایا آبیانہ کی فہرست", completeT:"مکمل فہرست", personalT:"ذاتی ریکارڈ", summaryT:"سیزن خلاصہ",
        jama:"جمع شدہ (روپے)", paas:"میرے پاس (روپے)", baq:"بقایا (روپے)", farmers:"کل کسان",
        Paid:"ادا شدہ", Partial:"جزوی ادا", Unpaid:"غیر ادا", receipt:"ادائیگی رسید", season:"سیزن", date:"تاریخ اشاعت",
        total:"کل", bills:"بلوں کی تعداد", collected:"وصول شدہ", remainingL:"بقایا", pct:"وصولی فیصد",
@@ -1604,7 +1699,7 @@ var LBL = {
        lastdate:"آخری تاریخ", kharifB:"خریف 2025 بقایا (روپے)", rabiB:"ربیع 2026 بقایا (روپے)", totB:"کل بقایا (روپے)",
        billT:"آبیانہ بل", paidtodate:"اب تک ادا شدہ", remL:"بقایا ادائیگی", lastpay:"آخری تاریخ: 17 نومبر 2026", paynote:"براہ کرم آخری تاریخ تک ادائیگی کریں۔", psid:"پی ایس آئی ڈی", psidManual:"دستی وصولی" },
   bi:{ sr:"Sr / نمبر", khata:"Khata / کھاتہ", farmer:"Farmer / کسان", father:"Father / والد", area:"Area / رقبہ (K-M)", bill:"Bill / بل (Rs)", paid:"Paid / ادا (Rs)", rem:"Remaining / بقایا (Rs)", status:"Status / حالت",
-       paidT:"Paid List / ادا شدہ فہرست", unpaidT:"Outstanding Abiana List / بقایا آبیانہ کی فہرست", completeT:"Complete List / مکمل فہرست", summaryT:"Season Summary / سیزن خلاصہ",
+       paidT:"Paid List / ادا شدہ فہرست", unpaidT:"Outstanding Abiana List / بقایا آبیانہ کی فہرست", completeT:"Complete List / مکمل فہرست", personalT:"Personal Record / ذاتی ریکارڈ", summaryT:"Season Summary / سیزن خلاصہ",
        jama:"Paid — Jama / جمع شدہ (Rs)", paas:"Collected — Paas / میرے پاس (Rs)", baq:"Baqaya / بقایا (Rs)", farmers:"Total Farmers / کل کسان",
        Paid:"Paid / ادا شدہ", Partial:"Partial / جزوی", Unpaid:"Unpaid / غیر ادا", receipt:"Payment Receipt / ادائیگی رسید", season:"Season / سیزن", date:"Print Date / تاریخ",
        total:"TOTAL / کل", bills:"Bills / بل", collected:"Collected / وصول", remainingL:"Remaining / بقایا", pct:"Collection % / وصولی فیصد",
@@ -1711,50 +1806,56 @@ function doPrint(html, lang, plain){
   }
   setTimeout(function(){ window.print(); }, 60);
 }
+/* Print Centre — ONE unified form (user, 14 Nov 2026): Season + Report Type
+   + Language + a single Print / Save PDF button. The old separate buttons
+   (Chowkidar Copy, Contact Numbers List, Patwari Report, Contact List
+   screen) are gone; every report is a Report Type option. */
 function printReport(){
   var season = $("pSeason").value, type = $("pType").value, lang = $("pLang").value, L = LBL[lang];
-  var seasonLabel = SEASONS[season].label;
-  var title = type==="paid" ? L.paidT : type==="unpaid" ? L.unpaidT : type==="complete" ? L.completeT : L.summaryT;
-  if(type==="summary"){
-    var s = seasonStats(season);
-    var rows = '<tr><td>' + esc(SEASONS[season].label) + '</td><td class="num">' + fmtN(s.bills.length) + '</td><td class="num">' + fmtN(s.total) + '</td><td class="num">' + fmtN(s.jama) + '</td><td class="num">' + fmtN(s.paas) + '</td><td class="num">' + fmtN(s.rem) + '</td><td class="num">' + s.pct + '%</td></tr>';
-    var h = letterhead(lang, title, seasonLabel, season, s.bills.length)
-      + '<table><colgroup><col style="width:22%"><col style="width:8%"><col style="width:16%"><col style="width:15%"><col style="width:15%"><col style="width:16%"><col style="width:8%"></colgroup><thead><tr><th>' + esc(L.season) + '</th><th class="num">' + esc(L.bills) + '</th><th class="num">' + esc(L.bill) + '</th><th class="num">' + esc(L.jama) + '</th><th class="num">' + esc(L.paas) + '</th><th class="num">' + esc(L.baq) + '</th><th class="num">' + esc(L.pct) + '</th></tr></thead>'
-      + '<tbody>' + rows + '</tbody></table>' + sigBlock(lang) + docFoot(title);
-    doPrint(h, lang); return;
-  }
+  if(type==="patwari"){ printPatwariReport(); return; }
+  if(type==="chowkidar"){ printChowkidar(); return; }
+  if(type==="contact"){ printContactList(); return; }
+  /* Unpaid / Paid / Personal Record: a per-season list, or all seasons when
+     Season = "All Outstanding". Personal Record = every farmer (paid +
+     unpaid) — the old Complete List. */
+  var listType = (type==="personal") ? "complete" : type;
+  var seasonLabel = season==="all"
+    ? (lang==="ur" ? "تمام سیزن" : lang==="bi" ? "All Seasons / تمام سیزن" : "All Seasons")
+    : SEASONS[season].label;
+  var seasonId = season==="all" ? null : season;
+  var title = listType==="paid" ? L.paidT : listType==="unpaid" ? L.unpaidT : L.personalT;
   var bs = billsFor(season);
-  if(type==="paid") bs = bs.filter(function(b){ return statusOf(b)==="Paid"; });
-  if(type==="unpaid") bs = bs.filter(function(b){ return statusOf(b)!=="Paid"; });
+  if(listType==="paid") bs = bs.filter(function(b){ return statusOf(b)==="Paid"; });
+  if(listType==="unpaid") bs = bs.filter(function(b){ return statusOf(b)!=="Paid"; });
   var tB=0,tP=0,tR=0, rowsHtml="";
   bs.forEach(function(b, i){
     var paid = paidCapped(b), rem = remaining(b), st = statusOf(b);
     tB+=effAmt(b); tP+=paid; tR+=rem;
     var base = '<tr><td>' + (i+1) + '</td><td>' + b.khata + '</td><td>' + nameCell(b, lang, false) + '</td><td>' + nameCell(b, lang, true) + '</td><td>' + areaStr(b) + '</td>'
       + '<td class="num">' + fmtN(effAmt(b)) + '</td>';
-    if(type==="paid") rowsHtml += base + '<td class="num">' + fmtN(paid) + '</td></tr>';
-    else if(type==="unpaid") rowsHtml += base + '<td class="num">' + fmtN(rem) + '</td></tr>';
+    if(listType==="paid") rowsHtml += base + '<td class="num">' + fmtN(paid) + '</td></tr>';
+    else if(listType==="unpaid") rowsHtml += base + '<td class="num">' + fmtN(rem) + '</td></tr>';
     else rowsHtml += base + '<td class="num">' + fmtN(paid) + '</td><td class="num">' + fmtN(rem) + '</td><td>' + esc(L[st]) + '</td></tr>';
   });
-  var ncols = type==="complete" ? 9 : 7;
+  var ncols = listType==="complete" ? 9 : 7;
   if(!bs.length) rowsHtml = '<tr><td colspan="' + ncols + '" style="text-align:center">—</td></tr>';
   var headRow = '<tr><th>' + esc(L.sr) + '</th><th>' + esc(L.khata) + '</th><th>' + esc(L.farmer) + '</th><th>' + esc(L.father) + '</th><th>' + esc(L.area) + '</th>'
     + '<th class="num">' + esc(L.bill) + '</th>';
   var totRow;
-  if(type==="paid"){
+  if(listType==="paid"){
     headRow += '<th class="num">' + esc(L.paid) + '</th></tr>';
     totRow = '<tr class="tot"><td colspan="5">' + esc(L.total) + ' (' + bs.length + ')</td><td class="num">' + fmtN(tB) + '</td><td class="num">' + fmtN(tP) + '</td></tr>';
-  } else if(type==="unpaid"){
+  } else if(listType==="unpaid"){
     headRow += '<th class="num">' + esc(L.baq) + '</th></tr>';
     totRow = '<tr class="tot"><td colspan="5">' + esc(L.total) + ' (' + bs.length + ')</td><td class="num">' + fmtN(tB) + '</td><td class="num">' + fmtN(tR) + '</td></tr>';
   } else {
     headRow += '<th class="num">' + esc(L.paid) + '</th><th class="num">' + esc(L.rem) + '</th><th>' + esc(L.status) + '</th></tr>';
     totRow = '<tr class="tot"><td colspan="5">' + esc(L.total) + ' (' + bs.length + ')</td><td class="num">' + fmtN(tB) + '</td><td class="num">' + fmtN(tP) + '</td><td class="num">' + fmtN(tR) + '</td><td></td></tr>';
   }
-  var colgroup = type==="complete"
+  var colgroup = listType==="complete"
     ? '<colgroup><col style="width:4%"><col style="width:6%"><col style="width:20%"><col style="width:17%"><col style="width:10%"><col style="width:12%"><col style="width:11%"><col style="width:11%"><col style="width:9%"></colgroup>'
     : '<colgroup><col style="width:4%"><col style="width:7%"><col style="width:24%"><col style="width:21%"><col style="width:11%"><col style="width:15%"><col style="width:18%"></colgroup>';
-  var html = letterhead(lang, title, seasonLabel, season, bs.length)
+  var html = letterhead(lang, title, seasonLabel, seasonId, bs.length)
     + '<table>' + colgroup + '<thead>' + headRow + '</thead><tbody>'
     + rowsHtml
     + totRow + '</tbody></table>'
@@ -1845,7 +1946,6 @@ function printChowkidar(){
     + sigBlock(lang) + docFoot(lang==="ur" ? "نقل برائے چوکیدار — بقایا آبیانہ کی فہرست" : "COPY FOR CHOWKIDAR — Outstanding Abiana List");
   doPrint(h, lang);
 }
-$("pChowk").addEventListener("click", printChowkidar);
 
 /* ==================== CONTACT NUMBERS LIST (owner, 23 Oct 2026) ====================
    URDU-ONLY print of the farmers who still owe money AND have a number
@@ -1965,78 +2065,107 @@ function transliterateName(en){
     return URDU_WORDS[k] || w;
   }).join(" ");
 }
-/* Patwari-only bilingual name cell: Urdu line (baked ur_name/ur_father, else
-   transliterated) + smaller English line. Never an English-only name. */
-function pwNameCell(ur, en){
-  var u = ur || transliterateName(en);
-  if(!u && !en) return '<span class="pw-dash">—</span>';
-  return '<span class="urdu">' + esc(u) + '</span><span class="pw-en">' + esc(en || "") + '</span>';
+/* ==================== PATWARI REPORT — professional register (14 Nov 2026) ====================
+   A plain simple list (NOT an official report): just the farmers' abiana
+   amounts + contact details so the patwari can call them. No letterhead, no
+   addressee, no purpose paragraph, no deadline line, no name/signature
+   block, no stamp/signature images (those are receipts only), NO phone
+   number. Wrong bills never appear (farmerTotals -> allBills exclusion).
+   Numbers not saved yet print as a clean "—" (no dotted write-in lines).
+   LANGUAGE (user, 14 Nov 21:17): the report follows the Print Centre
+   Language selection — one complete table per language, NEVER two languages
+   in one cell or one line. Urdu -> the whole report in Urdu only. English ->
+   the whole report in English only. Bilingual -> a complete Urdu table,
+   then a complete English table on a fresh page. Each language block is
+   isolated with its own dir, so no bidi collision can occur. The season
+   count is its OWN column ("Seasons" / "فصلیں") — the Total Due amount is a
+   clean number only. */
+function pw2Lang(){
+  var pl = $("pLang");
+  var lang = (pl && pl.value) ? pl.value : printLang;
+  if(lang !== "ur" && lang !== "en" && lang !== "bi") lang = "bi";
+  return lang;
 }
-/* Patwari-only owner-number cell: saved number, else a clean em dash (NO
-   dotted write-in line — contactNumCell keeps its dotted line for the
-   Contact Numbers list). */
-function pwNumCell(num){
-  if(num) return '<span class="ctnum" dir="ltr">' + esc(num) + '</span>';
-  return '<span class="pw-dash">—</span>';
-}
-/* Patwari-only thekedar cell: Urdu transliteration (line 1) + English name
-   (line 2) + number (line 3, LTR); a missing part shows a clean em dash. */
-function pwThekCell(c){
-  if(!c.tkName && !c.thekedar) return '<span class="pw-dash">—</span>';
-  var out = "";
-  if(c.tkName) out += '<span class="urdu">' + esc(transliterateName(c.tkName)) + '</span><span class="pw-en">' + esc(c.tkName) + '</span>';
-  if(c.thekedar) out += '<span class="ctnum" dir="ltr">' + esc(c.thekedar) + '</span>';
-  return out;
-}
-/* ==================== PATWARI REPORT (plain list, 14 Nov 2026) ====================
-   NOT an official report — just the farmers' abiana amounts + contact details
-   so the patwari can call them. Plain list only: a bilingual title block
-   (village + date), a compact header block with the Numberdar's name and a
-   short collection-efforts note (21 Nov 2026: NO phone number in the report),
-   the table, and a totals row. NO letterhead, NO addressee, NO covering
-   line/paragraph, NO deadline line, NO name/signature block, NO stamp/
-   signature images (those are receipts only). Wrong bills never appear
-   (farmerTotals -> allBills exclusion). Numbers not saved yet print as a
-   clean "—" (no dotted write-in lines in this report). Every name prints
-   in BOTH Urdu and English; the table has fixed column widths and a uniform
-   row height. */
-function printPatwariReport(){
-  var rows = farmerTotals();
-  var head = '<div class="rt"><span class="urdu">بقایا آبیانہ — چک نمبر 130/1-L</span><span class="pw-sub-en">Outstanding Abiana — Chak 130/1-L</span></div>'
-    + '<div class="urdu" dir="rtl" style="text-align:center;font-size:15px;margin:2px 0">تحصیل خانپور، ضلع رحیم یار خان</div>'
-    + '<div style="text-align:center;font-size:11.5px;margin:2px 0">Tehsil Khanpur, District Rahim Yar Khan</div>'
-    + '<div style="text-align:center;font-size:12.5px;margin:0 0 8px">Date: ' + nowDmy() + '</div>';
-  if(!rows.length){
-    doPrint(head + '<div class="urdu" dir="rtl" style="font-size:18px;text-align:center;margin:26px 0">کوئی بقایا نہیں — سب کسان clear ہیں۔</div>', "ur");
-    return;
+/* Patwari-only name/father cell, ONE language at a time: Urdu uses the baked
+   ur_name/ur_father, else the transliteration; English uses the Roman name. */
+function pw2NameCell(b, lang, father){
+  var rn = father ? (b.father||"") : b.name;
+  if(lang === "ur"){
+    var un = father ? (b.ur_father || transliterateName(b.father||"")) : (b.ur_name || transliterateName(b.name));
+    return '<span class="urdu">' + esc(un) + '</span>';
   }
-  var pwHead = '<div class="pw-head">'
-    + '<div class="pw-nd"><span class="urdu">نمبردار: عاطف — چک 130/1-L</span><span class="pw-en">Numberdar: Atif — Chak 130/1-L</span></div>'
-    + '<div class="pw-eff"><span class="urdu">ان کسانوں کو آبیانہ ادا کرنے کے لیے کئی بار مطلع کیا گیا: فون پر 2–3 بار، مسجد میں اعلان 2–3 بار، بل آنے پر نمبردار کی ذاتی کال، چوکیدار کے ذریعے گھر گھر اطلاع 2–3 بار، اور گاؤں کی دونوں مسجدوں کے باہر نوٹس لگائے گئے۔ اس سب کے باوجود انہوں نے ابھی تک ادا نہیں کیا۔</span><span class="pw-en">These farmers were informed several times to pay their abiana: phone calls 2–3 times, mosque announcements 2–3 times, a personal call by the Numberdar when the bills arrived, door-to-door notice through the chowkidar 2–3 times, and notices posted outside both mosques of the village. Despite all this, they still have not paid.</span></div>'
-    + '</div>';
+  return esc(rn);
+}
+/* Patwari-only owner-number cell: saved number, else a clean em dash. */
+function pw2NumCell(num){
+  if(num) return '<span class="ctnum" dir="ltr">' + esc(num) + '</span>';
+  return '<span class="pw2-dash">—</span>';
+}
+/* Patwari-only thekedar cell, ONE language at a time: name (transliterated
+   for Urdu) + number (LTR); a missing part shows a clean em dash. */
+function pw2ThekCell(c, lang){
+  if(!c.tkName && !c.thekedar) return '<span class="pw2-dash">—</span>';
+  var nm = lang === "ur"
+    ? (c.tkName ? '<span class="urdu">' + esc(transliterateName(c.tkName)) + '</span>' : '')
+    : (c.tkName ? esc(c.tkName) : '');
+  if(c.thekedar) return nm + (nm ? '<br>' : '') + '<span class="ctnum" dir="ltr">' + esc(c.thekedar) + '</span>';
+  return nm;
+}
+/* One complete Patwari table in a single language (lang = "ur" or "en"). */
+function pw2Table(lang){
+  var rows = farmerTotals();
+  var isUr = lang === "ur";
+  var T = isUr
+    ? { title:"بقایا آبیانہ — چک نمبر 130/1-L", sub:"تحصیل خانپور، ضلع رحیم یار خان", dateLbl:"تاریخ", nd:"نمبردار: عاطف — چک 130/1-L",
+        eff:"ان کسانوں کو آبیانہ ادا کرنے کے لیے متعدد بار مطلع کیا گیا ہے: فون پر 2–3 بار رابطہ کیا گیا، مسجد میں اعلان 2–3 بار کروایا گیا، بل آنے پر نمبردار کی ذاتی کال بھی کی گئی، چوکیدار کے ذریعے گھر گھر اطلاع 2–3 بار دی گئی، اور گاؤں کی دونوں مسجدوں کے باہر نوٹس لگائے گئے۔ ان تمام کوششوں کے باوجود انہوں نے ابھی تک ادا نہیں کیا۔",
+        hSr:"نمبر", hName:"نام", hFather:"ولدیت", hKhata:"کھاتہ نمبر", hOwner:"مالک کا نمبر", hThek:"ٹھیکیدار (نام + نمبر)", hSeas:"فصلیں", hTot:"کل بقایا (روپے)",
+        totLbl:"کل — ", totFarmers:" کسان", empty:"کوئی بقایا نہیں — سب کسان clear ہیں۔" }
+    : { title:"Outstanding Abiana — Chak 130/1-L", sub:"Tehsil Khanpur, District Rahim Yar Khan", dateLbl:"Date", nd:"Numberdar: Atif — Chak 130/1-L",
+        eff:"These farmers have been informed several times to pay their abiana: phone calls 2–3 times, mosque announcements 2–3 times, a personal call by the Numberdar when the bills arrived, door-to-door notice through the chowkidar 2–3 times, and notices posted outside both mosques of the village. Despite all this, they still have not paid.",
+        hSr:"No.", hName:"Name", hFather:"Father", hKhata:"Khata No.", hOwner:"Owner No.", hThek:"Thekedar (Name + No.)", hSeas:"Seasons", hTot:"Total Due (Rs)",
+        totLbl:"Total — ", totFarmers:" farmers", empty:"No outstanding dues — every farmer is clear." };
+  var dir = isUr ? 'rtl' : 'ltr';
+  var u = isUr ? ' urdu' : '';
+  var head = '<div class="pw2-title" dir="' + dir + '">'
+    + '<div class="pw2-t1' + u + '">' + esc(T.title) + '</div>'
+    + '<div class="pw2-t2' + u + '">' + esc(T.sub) + '</div>'
+    + '<div class="pw2-t3' + u + '">' + esc(T.dateLbl) + ': ' + nowDmy() + '</div></div>';
+  if(!rows.length){
+    return head + '<div dir="' + dir + '" style="font-size:18px;text-align:center;margin:26px 0">' + esc(T.empty) + '</div>';
+  }
+  var pwHead = '<div class="pw2-head" dir="' + dir + '">'
+    + '<div class="pw2-nd' + u + '">' + esc(T.nd) + '</div>'
+    + '<div class="pw2-eff' + u + '">' + esc(T.eff) + '</div></div>';
   var rowsHtml = "", grand = 0;
   rows.forEach(function(g, i){
     var c = getContact(g.khata);
     grand += g.tot;
     rowsHtml += '<tr><td>' + (i+1) + '</td>'
-      + '<td class="pw-name">' + pwNameCell(g.rep.ur_name, g.rep.name) + '</td>'
-      + '<td class="pw-name">' + pwNameCell(g.rep.ur_father, g.rep.father) + '</td>'
+      + '<td class="pw2-name">' + pw2NameCell(g.rep, lang, false) + '</td>'
+      + '<td class="pw2-name">' + pw2NameCell(g.rep, lang, true) + '</td>'
       + '<td>' + g.khata + '</td>'
-      + '<td class="ctn">' + pwNumCell(c.owner) + '</td>'
-      + '<td class="ctn pw-thek">' + pwThekCell(c) + '</td>'
-      + '<td class="num bold pw-amt"><span dir="ltr">' + fmtN(g.tot) + '</span>' + (g.nSeasons > 2 ? '<span class="pw-note" dir="rtl"> · ' + g.nSeasons + ' فصلیں</span>' : '') + '</td></tr>';
+      + '<td class="ctn">' + pw2NumCell(c.owner) + '</td>'
+      + '<td class="ctn pw2-thek">' + pw2ThekCell(c, lang) + '</td>'
+      + '<td class="num pw2-seas">' + g.nSeasons + '</td>'
+      + '<td class="num bold pw2-amt">' + fmtN(g.tot) + '</td></tr>';
   });
   var h = head + pwHead
-    + '<table class="pw"><colgroup><col style="width:4%"><col style="width:21%"><col style="width:18%"><col style="width:7%"><col style="width:15%"><col style="width:20%"><col style="width:15%"></colgroup>'
-    + '<thead><tr><th>نمبر<span class="pw-en">No.</span></th><th>نام<span class="pw-en">Name</span></th><th>ولدیت<span class="pw-en">Father</span></th><th>کھاتہ نمبر<span class="pw-en">Khata No.</span></th><th>مالک کا نمبر<span class="pw-en">Owner No.</span></th><th>ٹھیکیدار (نام + نمبر)<span class="pw-en">Thekedar (Name + No.)</span></th><th class="num">کل بقایا (روپے)<span class="pw-en">Total Due (Rs)</span></th></tr></thead><tbody>'
+    + '<div dir="' + dir + '"><table class="pw2"><colgroup><col style="width:4%"><col style="width:19%"><col style="width:16%"><col style="width:7%"><col style="width:14%"><col style="width:18%"><col style="width:6%"><col style="width:16%"></colgroup>'
+    + '<thead><tr><th>' + esc(T.hSr) + '</th><th>' + esc(T.hName) + '</th><th>' + esc(T.hFather) + '</th><th>' + esc(T.hKhata) + '</th><th>' + esc(T.hOwner) + '</th><th>' + esc(T.hThek) + '</th><th class="pw2-seas">' + esc(T.hSeas) + '</th><th class="num">' + esc(T.hTot) + '</th></tr></thead><tbody>'
     + rowsHtml
-    + '<tr class="tot"><td colspan="6">کل — ' + fmtN(rows.length) + ' کسان<span class="pw-en">Total — ' + fmtN(rows.length) + ' farmers</span></td><td class="num bold">' + fmtN(grand) + '</td></tr>'
-    + '</tbody></table>';
-  doPrint(h, "ur");
+    + '<tr class="tot"><td colspan="7">' + esc(T.totLbl) + fmtN(rows.length) + esc(T.totFarmers) + '</td><td class="num bold">' + fmtN(grand) + '</td></tr>'
+    + '</tbody></table></div>';
+  return h;
 }
-$("pPatwari").addEventListener("click", printPatwariReport);
-$("pContacts").addEventListener("click", printContactList);
-$("pContactsView").addEventListener("click", function(){ switchView("contacts"); });
+function printPatwariReport(){
+  var lang = pw2Lang();
+  if(lang === "ur"){ doPrint('<div class="pw2-doc" dir="rtl">' + pw2Table("ur") + '</div>', "ur"); return; }
+  if(lang === "en"){ doPrint('<div class="pw2-doc" dir="ltr">' + pw2Table("en") + '</div>', "en"); return; }
+  /* Bilingual: a complete Urdu table, then a complete English table on a
+     fresh page — never two languages in one cell or one line. */
+  doPrint('<div class="pw2-doc" dir="rtl">' + pw2Table("ur") + '</div>'
+    + '<div class="pw2-doc" dir="ltr" style="page-break-before:always">' + pw2Table("en") + '</div>', "bi");
+}
 $("cPrintBtn").addEventListener("click", printContactList);
 
 /* On-screen Contact list (Print Centre se bhi, Contacts tab se bhi): same
