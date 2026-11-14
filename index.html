@@ -339,6 +339,8 @@ nav button.on .ic{filter:none}
       <p class="small mut" style="margin-top:8px">Chowkidar Copy lists <b>only farmers who still owe something</b>, with the Kharif 2025 and Rabi 2026 outstanding amounts and the combined TOTAL for each farmer. Totals include Kharif 2024 / Rabi 2025 dues where noted.</p>
       <button class="btn block" id="pContacts" style="margin-top:16px">📞 Contact Numbers List — Print (Urdu)</button>
       <p class="small mut" style="margin-top:8px">Urdu list of the farmers who still owe money: <b>name, khata no., owner number, thekedar name + number, total baqaya</b>. Jo number save hai wo khud print hoga; khali jagah par haath se number likh sakte ho. Number save karne ke liye kisan ka bill kholo — wahan <b>📞 Contact Numbers</b> wala hissa hai.</p>
+      <button class="btn block gold" id="pPatwari" style="margin-top:16px">📋 Patwari Report — Print (Urdu)</button>
+      <p class="small mut" style="margin-top:8px">Urdu list of <b>ALL farmers who still owe money</b> (number ho ya na ho): <b>name, walidiyat (father), khata no., owner number, thekedar name + number, total baqaya</b>. Khali jagah par number haath se likh sakte ho. Galat (wrong) bills is list mein nahi aate.</p>
       <button class="btn block ghost" id="pContactsView">📋 Contact List Screen Par Dekho (tap = call)</button>
     </div>
   </section>
@@ -467,9 +469,21 @@ var LS_PAY = "abiana_payments_v1", LS_CUSTOM = "abiana_custom_bills_v1",
     LS_PIN = "abiana_pin_hash", LS_LANG = "abiana_print_lang", LS_SEASON = "abiana_season",
     LS_CONTACTS = "abiana_contacts_v1";
 function lsGet(k, dflt){ try{ var v = localStorage.getItem(k); return v ? JSON.parse(v) : dflt; }catch(e){ return dflt; } }
-function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} if(k===LS_PAY||k===LS_CUSTOM||k===LS_CONTACTS) markSyncDirty(); }
+/* Storage failure must NEVER look like a saved payment (v28, 14 Nov 2026):
+   if localStorage refuses a write (full/blocked storage), warn the Numberdar
+   ONCE per session instead of failing silently. */
+var storageWarned = false;
+function warnStorage(){
+  if(storageWarned) return; storageWarned = true;
+  try{ alert("⚠️ Storage save FAILED — ye payment save NAHI hui! Phone ki storage full ya blocked ho sakti hai. Jagah khali kar ke dobara save karo."); }catch(e){}
+}
+function checkStorageHealth(){
+  try{ localStorage.setItem("__abiana_test__", "1"); localStorage.removeItem("__abiana_test__"); }
+  catch(e){ warnStorage(); }
+}
+function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ warnStorage(); } if(k===LS_PAY||k===LS_CUSTOM||k===LS_CONTACTS) markSyncDirty(); }
 function lsGetRaw(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
-function lsSetRaw(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+function lsSetRaw(k, v){ try{ localStorage.setItem(k, v); }catch(e){ warnStorage(); } }
 
 var payments = lsGet(LS_PAY, {});          // {season_id:{khata:[{amount,date,note,ts}]}}
 var customBills = lsGet(LS_CUSTOM, []);     // [bill,...]
@@ -500,14 +514,38 @@ function areaStr(b){ return b.kanal + "K " + b.marla + "M"; }
 function effAmt(b){ return b.season_id==="kharif2025" ? (b.payable_late!=null ? b.payable_late : b.amt) : b.amt; }
 
 /* Per-season display override for the collection last date (bill data keeps its printed due date).
-   Rabi 2026: the Assistant Commissioner has set 27/10/2026 as the last date for collection. */
-var SEASON_LAST_DATE = { kharif2025:"15/06/2026", rabi2026:"27/10/2026" };
+   Rabi 2026: the Assistant Commissioner has set 17/11/2026 as the last date for collection. */
+var SEASON_LAST_DATE = { kharif2025:"15/06/2026", rabi2026:"17/11/2026" };
 function seasonLastDate(sid){ return SEASON_LAST_DATE[sid] || (SEASONS[sid] ? SEASONS[sid].due : ""); }
 function lastDateOf(b){ return seasonLastDate(b.season_id); }
 
-function allBills(){ return BILLS.concat(customBills); }
+/* WRONG BILLS (Numberdar, 14 Nov 2026): these bills appear in the official
+   eAbiana screenshots but are ERRONEOUS — they must never show as baqaya, in
+   any list, total, report or dashboard. Kharif 2024 / Rabi 2025 entries are
+   not in the baked data (protective only — those seasons have no such bills).
+   Kharif 2025 wrong: 43, 226, 102. Rabi 2026 wrong: 27, 30, 43, 52, 166,
+   173, 186, 252, 82. The seeded custom baqaya bills (Rabi 2026 Khata
+   206/248) are NOT wrong — they stay payable. */
+var WRONG_BILLS = {
+  kharif2024: [428,43,169,180,102],
+  rabi2025: [20,43,102,254],
+  kharif2025: [43,226,102],
+  rabi2026: [27,30,43,52,166,173,186,252,82]
+};
+function isWrongBill(b){ var w = WRONG_BILLS[b.season_id]; return !!w && w.indexOf(b.khata) !== -1; }
+
+function allBills(){ return BILLS.concat(customBills).filter(function(b){ return !isWrongBill(b); }); }
 function billsFor(season){ var a = allBills(); if(season && season!=="all") a = a.filter(function(b){ return b.season_id===season; }); return a.slice().sort(function(x,y){ return x.khata - y.khata; }); }
 function findBill(seasonId, khata){ var a = allBills(); for(var i=0;i<a.length;i++){ if(a[i].season_id===seasonId && a[i].khata===khata) return a[i]; } return null; }
+/* pkey-aware lookup (v28, 14 Nov 2026 — Bug 1 fix): a khata can hold TWO
+   bills in one season (the original + a seeded baqaya bill, e.g. Rabi 2026
+   Khata 206/248). Matching on payKey() finds the exact bill; khata-only
+   matching would always return the first (original) one. */
+function findBillByKey(seasonId, pkey){
+  var a = allBills();
+  for(var i=0;i<a.length;i++){ if(a[i].season_id===seasonId && String(payKey(a[i]))===String(pkey)) return a[i]; }
+  return null;
+}
 /* Payments are keyed by season + khata. A bill may carry its own pkey when a second,
    separate bill exists for the same khata in the same season (the seeded baqaya bills
    for Khata 206/248) — their payments must stay independent of the original bill's. */
@@ -583,11 +621,14 @@ function amountWords(num){
    Rule (per Numberdar): bills shown UNPAID in the video are the only ones still owed;
    bills shown "Collected" were received in cash by the Numberdar (not yet deposited onward);
    every other bill is already Paid. Seeded ONCE as full payments of the effective amount
-   (Kharif = with late fees). Never overwrites or repeats once any payments exist. */
+   (Kharif = with late fees). Never overwrites or repeats once any payments exist.
+   v28 (14 Nov 2026): wrong bills removed from SEED_UNPAID below (Kharif 226;
+   Rabi 27, 30, 52, 166, 173, 186, 252) — they are also skipped in
+   seedVideoStatuses() via isWrongBill(), so they are never seeded anything. */
 var LS_SEEDED = "abiana_seeded_v3";
 var SEED_UNPAID = {
-  kharif2025: [6,14,35,37,49,50,57,160,177,181,182,188,202,205,208,209,211,226,231,241,249,251,264,266,276,277,280,282,283],
-  rabi2026: [6,14,18,22,24,27,30,34,35,37,47,49,50,52,54,57,59,61,85,143,160,161,166,167,170,171,173,175,176,181,182,185,186,188,190,191,192,193,195,200,201,202,204,205,208,209,213,214,217,220,222,224,226,227,228,229,230,231,233,234,236,240,242,243,244,245,246,249,251,252,256,258,260,261,264,266,272,276,277,278,279,280,282,283,284]
+  kharif2025: [6,14,35,37,49,50,57,160,177,181,182,188,202,205,208,209,211,231,241,249,251,264,266,276,277,280,282,283],
+  rabi2026: [6,14,18,22,24,34,35,37,47,49,50,54,57,59,61,85,143,160,161,167,170,171,175,176,181,182,185,188,190,191,192,193,195,200,201,202,204,205,208,209,213,214,217,220,222,224,226,227,228,229,230,231,233,234,236,240,242,243,244,245,246,249,251,256,258,260,261,264,266,272,276,277,278,279,280,282,283,284]
 };
 var SEED_COLLECTED = {
   kharif2025: [34,36,38,64,178,180,232,247,256,259],
@@ -626,6 +667,9 @@ function seedVideoStatuses(){
   if(lsGetRaw(LS_SEEDED)) return;
   for(var k in payments){ if(payments[k] && Object.keys(payments[k]).length) return; }  // payments already exist — never re-seed
   BILLS.forEach(function(b){
+    /* v28: wrong bills (Numberdar, 14 Nov 2026) are never seeded a payment —
+       they do not exist as far as this app is concerned. */
+    if(isWrongBill(b)) return;
     /* The video seed covers ONLY Kharif 2025 and Rabi 2026 — the two seasons in the
        official-app recording. Bills of any other season (e.g. the Kharif 2024 / Rabi 2025
        baqaya bills added later) are NEVER seeded a payment: they stay UNPAID. */
@@ -889,9 +933,9 @@ function matchSearch(b){
 }
 function farmerRow(b){
   var st = statusOf(b), paid = paidCapped(b), rem = remaining(b);
-  return '<div class="farmer" data-sid="' + b.season_id + '" data-khata="' + b.khata + '">'
+  return '<div class="farmer" data-sid="' + b.season_id + '" data-khata="' + b.khata + '" data-pkey="' + esc(String(payKey(b))) + '">'
     + '<div class="khata"><div class="k">KHATA</div><div class="n">' + b.khata + '</div></div>'
-    + '<div class="info"><div class="nm">' + esc(b.name) + '</div>'
+    + '<div class="info"><div class="nm">' + esc(b.name) + (b.seeded ? ' <span style="font-size:11px;color:#b3261e;font-weight:700">[Baqaya bill]</span>' : '') + '</div>'
     + (b.ur_name ? '<div class="urnm urdu">' + esc(b.ur_name) + '</div>' : '')
     + '<div class="fa">s/o ' + esc(b.father||"") + ' · ' + areaStr(b) + ' · ' + esc(SEASONS[b.season_id].label) + '</div>'
     + '<div class="amts"><span>Bill <b>' + fmt(effAmt(b)) + '</b></span><span>Paid <b style="color:var(--em2)">' + fmt(paid) + '</b></span>' + (rem>0 ? '<span>Remaining <b style="color:var(--red)">' + fmt(rem) + '</b></span>' : '') + '</div></div>'
@@ -900,7 +944,11 @@ function farmerRow(b){
 function bindFarmerRows(container){
   var rows = container.querySelectorAll(".farmer");
   for(var i=0;i<rows.length;i++){ (function(r){ r.addEventListener("click", function(){
-    var b = findBill(r.getAttribute("data-sid"), Number(r.getAttribute("data-khata")));
+    /* v28: open the EXACT bill by its pkey when the row carries one (a khata
+       with two bills in one season); fall back to khata-only lookup for
+       rows without a pkey. */
+    var pk = r.getAttribute("data-pkey");
+    var b = pk ? findBillByKey(r.getAttribute("data-sid"), pk) : findBill(r.getAttribute("data-sid"), Number(r.getAttribute("data-khata")));
     if(b) openDetail(b);
   }); })(rows[i]); }
 }
@@ -1074,6 +1122,7 @@ function renderDetail(){
     }
     var remNow = remaining(b);
     if(amt > remNow && !confirm("Warning: This payment (" + fmt(amt) + ") is more than the remaining amount (" + fmt(remNow) + "). The extra will be recorded but the bill will simply show as Paid. Continue?")) return;
+    if(amt < remNow && !confirm("Ye raqam baqaya (" + fmt(remNow) + ") se kam hai — bill Partial rahega, poora Paid nahi hoga. Continue?")) return;
     addPayment(b, amt, date, note, kind); renderDetail();
   });
   $("rcLang").addEventListener("change", function(){ printLang = this.value; lsSetRaw(LS_LANG, printLang); $("pLang").value = printLang; });
@@ -1159,7 +1208,7 @@ $("resetBtn").addEventListener("click", function(){
 $("lockBtn").addEventListener("click", function(){ showLock(); });
 
 /* ==================== APP INSTALL & UPDATE (Settings) ==================== */
-var APP_VERSION = "v20";
+var APP_VERSION = "v28";
 (function(){ var el = $("updStatus"); if(el) el.innerHTML = "<b>Abiana Manager — Version " + APP_VERSION + "</b>"; })();
 var bipEvent = null;   // captured beforeinstallprompt (Chrome install offer)
 window.addEventListener("beforeinstallprompt", function(e){
@@ -1403,7 +1452,7 @@ var LBL = {
        payhist:"Payments Received", pdate:"Date", pamt:"Amount (Rs)", pnote:"Note", words:"Amount in Words", sig:"Signature & Seal — Muhammad Atif, Numberdar",
        metric:"Detail", value:"Value", received:"Received", balance:"Balance",
        lastdate:"Last Date", kharifB:"Kharif 2025 Baqaya (Rs)", rabiB:"Rabi 2026 Baqaya (Rs)", totB:"TOTAL Baqaya (Rs)",
-       billT:"ABIANA BILL", paidtodate:"Paid to Date", remL:"Remaining to Pay", lastpay:"Last date for payment: 27 October 2026", paynote:"Please pay by the last date.", psid:"PSID", psidManual:"Manual Collection" },
+       billT:"ABIANA BILL", paidtodate:"Paid to Date", remL:"Remaining to Pay", lastpay:"Last date for payment: 17 November 2026", paynote:"Please pay by the last date.", psid:"PSID", psidManual:"Manual Collection" },
   ur:{ sr:"نمبر", khata:"کھاتہ", farmer:"کسان", father:"والد", area:"رقبہ (کنال-مرلہ)", bill:"بل (روپے)", paid:"ادا شدہ (روپے)", rem:"بقایا (روپے)", status:"حالت",
        paidT:"ادا شدہ فہرست", unpaidT:"بقایا آبیانہ کی فہرست", completeT:"مکمل فہرست", summaryT:"سیزن خلاصہ",
        jama:"جمع شدہ (روپے)", paas:"میرے پاس (روپے)", baq:"بقایا (روپے)", farmers:"کل کسان",
@@ -1413,7 +1462,7 @@ var LBL = {
        payhist:"وصول شدہ ادائیگیاں", pdate:"تاریخ", pamt:"رقم (روپے)", pnote:"نوٹ", words:"رقم لفظوں میں", sig:"دستخط و مہر — محمد عاطف، نمبردار",
        metric:"تفصیل", value:"قدر", received:"موصول", balance:"بقایا",
        lastdate:"آخری تاریخ", kharifB:"خریف 2025 بقایا (روپے)", rabiB:"ربیع 2026 بقایا (روپے)", totB:"کل بقایا (روپے)",
-       billT:"آبیانہ بل", paidtodate:"اب تک ادا شدہ", remL:"بقایا ادائیگی", lastpay:"آخری تاریخ: 27 اکتوبر 2026", paynote:"براہ کرم آخری تاریخ تک ادائیگی کریں۔", psid:"پی ایس آئی ڈی", psidManual:"دستی وصولی" },
+       billT:"آبیانہ بل", paidtodate:"اب تک ادا شدہ", remL:"بقایا ادائیگی", lastpay:"آخری تاریخ: 17 نومبر 2026", paynote:"براہ کرم آخری تاریخ تک ادائیگی کریں۔", psid:"پی ایس آئی ڈی", psidManual:"دستی وصولی" },
   bi:{ sr:"Sr / نمبر", khata:"Khata / کھاتہ", farmer:"Farmer / کسان", father:"Father / والد", area:"Area / رقبہ (K-M)", bill:"Bill / بل (Rs)", paid:"Paid / ادا (Rs)", rem:"Remaining / بقایا (Rs)", status:"Status / حالت",
        paidT:"Paid List / ادا شدہ فہرست", unpaidT:"Outstanding Abiana List / بقایا آبیانہ کی فہرست", completeT:"Complete List / مکمل فہرست", summaryT:"Season Summary / سیزن خلاصہ",
        jama:"Paid — Jama / جمع شدہ (Rs)", paas:"Collected — Paas / میرے پاس (Rs)", baq:"Baqaya / بقایا (Rs)", farmers:"Total Farmers / کل کسان",
@@ -1423,7 +1472,7 @@ var LBL = {
        payhist:"Payments Received / وصول شدہ ادائیگیاں", pdate:"Date / تاریخ", pamt:"Amount / رقم (Rs)", pnote:"Note / نوٹ", words:"Amount in Words / رقم لفظوں میں", sig:"Signature & Seal / دستخط و مہر — Muhammad Atif, Numberdar / محمد عاطف، نمبردار",
        metric:"Detail / تفصیل", value:"Value / قدر", received:"Received / موصول", balance:"Balance / بقایا",
        lastdate:"Last Date / آخری تاریخ", kharifB:"Kharif 2025 Baqaya / خریف بقایا (Rs)", rabiB:"Rabi 2026 Baqaya / ربیع بقایا (Rs)", totB:"TOTAL Baqaya / کل بقایا (Rs)",
-       billT:"ABIANA BILL / آبیانہ بل", paidtodate:"Paid to Date / اب تک ادا شدہ", remL:"Remaining to Pay / بقایا ادائیگی", lastpay:"Last date for payment: 27 October 2026 / آخری تاریخ: 27 اکتوبر 2026", paynote:"Please pay by the last date. / براہ کرم آخری تاریخ تک ادائیگی کریں۔", psid:"PSID / پی ایس آئی ڈی", psidManual:"Manual Collection / دستی وصولی" }
+       billT:"ABIANA BILL / آبیانہ بل", paidtodate:"Paid to Date / اب تک ادا شدہ", remL:"Remaining to Pay / بقایا ادائیگی", lastpay:"Last date for payment: 17 November 2026 / آخری تاریخ: 17 نومبر 2026", paynote:"Please pay by the last date. / براہ کرم آخری تاریخ تک ادائیگی کریں۔", psid:"PSID / پی ایس آئی ڈی", psidManual:"Manual Collection / دستی وصولی" }
 };
 var EMBLEM_SVG = '<svg width="32" height="32" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="none" stroke="#000" stroke-width="2"/><circle cx="24" cy="24" r="18.5" fill="none" stroke="#000" stroke-width="1"/><path d="M24 12 C24 12 15.5 21.5 15.5 28.5 a8.5 8.5 0 0 0 17 0 C32.5 21.5 24 12 24 12 Z" fill="none" stroke="#000" stroke-width="1.8"/></svg>';
 function titleHtml(lang, title){
@@ -1646,8 +1695,8 @@ function printChowkidar(){
   var h = corner + '<div style="clear:both"></div>'
     + letterhead(lang, L.unpaidT, seasonsLine, null, n)
     + '<div class="chowinst urdu" dir="rtl">درج ذیل کاشتکاروں کو مطلع کریں کہ ان کے ذمے آبیانہ کی درج شدہ رقم باقی ہے۔</div>'
-    + '<div class="chowline">Last date for payment: 27 October 2026</div>'
-    + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 27 اکتوبر 2026</div>'
+    + '<div class="chowline">Last date for payment: 17 November 2026</div>'
+    + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 17 نومبر 2026</div>'
     + '<table class="chow"><colgroup><col style="width:4%"><col style="width:7%"><col style="width:24%"><col style="width:21%"><col style="width:13%"><col style="width:13%"><col style="width:18%"></colgroup><thead><tr><th>' + esc(L.sr) + '</th><th>' + esc(L.khata) + '</th><th>' + esc(L.farmer) + '</th><th>' + esc(L.father) + '</th>'
     + '<th class="num">' + esc(chowSeasonLabel("kharif2025", lang)) + '</th><th class="num">' + esc(chowSeasonLabel("rabi2026", lang)) + '</th><th class="num">' + esc(L.totB) + '</th></tr></thead><tbody>'
     + rowsHtml
@@ -1701,7 +1750,7 @@ function printContactList(){
   if(!rows.length){
     var h0 = letterhead("ur", title, "خریف 2025 + ربیع 2026", null, 0)
       + noteLine
-      + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 27 اکتوبر 2026</div>'
+      + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 17 نومبر 2026</div>'
       + '<div class="urdu" dir="rtl" style="font-size:18px;text-align:center;margin:26px 0">ابھی تک کسی کسان کا نمبر درج نہیں ہے۔</div>';
     doPrint(h0, "ur");
     return;
@@ -1719,7 +1768,7 @@ function printContactList(){
   });
   var h = letterhead("ur", title, "خریف 2025 + ربیع 2026", null, rows.length)
     + noteLine
-    + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 27 اکتوبر 2026</div>'
+    + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 17 نومبر 2026</div>'
     + '<table class="ctlist"><colgroup><col style="width:5%"><col style="width:25%"><col style="width:10%"><col style="width:22%"><col style="width:22%"><col style="width:16%"></colgroup>'
     + '<thead><tr><th>نمبر</th><th>نام</th><th>کھاتہ نمبر</th><th>مالک کا نمبر</th><th>ٹھیکیدار کا نمبر</th><th class="num">کل بقایا (روپے)</th></tr></thead><tbody>'
     + rowsHtml
@@ -1727,6 +1776,48 @@ function printContactList(){
     + '<div class="urdu" dir="rtl" style="font-size:16px;margin-top:8px">نوٹ: کل بقایا میں جہاں لاگو ہو، خریف 2024 اور ربیع 2025 کا بقایا بھی شامل ہے۔ خالی جگہ پر نمبر ہاتھ سے لکھا جا سکتا ہے۔</div>';
   doPrint(h, "ur");
 }
+/* ==================== PATWARI REPORT (owner, 14 Nov 2026) ====================
+   Urdu print of EVERY farmer who still owes money — number saved ho ya na
+   ho (NO number filter, unlike the Contact Numbers list above). Father
+   (walidiyat) is its own column. A number that is not saved yet prints as
+   a dotted write-in line so it can be filled in by hand with a pen. Same
+   cross-season roll-up as the Chowkidar Copy (farmerTotals), so the totals
+   reconcile — and wrong bills (Numberdar's 14 Nov lists) never appear,
+   because allBills() already excludes them. No grand-total line, no
+   signature/footer — "ye just patwari report hai". */
+function printPatwariReport(){
+  var rows = farmerTotals();
+  var title = "بقایا آبیانہ — پٹواری رپورٹ";
+  if(!rows.length){
+    var h0 = letterhead("ur", title, "خریف 2025 + ربیع 2026", null, 0)
+      + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 17 نومبر 2026</div>'
+      + '<div class="urdu" dir="rtl" style="font-size:18px;text-align:center;margin:26px 0">کوئی بقایا نہیں — سب کسان clear ہیں۔</div>';
+    doPrint(h0, "ur");
+    return;
+  }
+  var rowsHtml = "";
+  rows.forEach(function(g, i){
+    var c = getContact(g.khata);
+    var un = g.rep.ur_name || g.rep.name;
+    var uf = g.rep.ur_father || g.rep.father || "";
+    rowsHtml += '<tr><td>' + (i+1) + '</td>'
+      + '<td><span class="urdu">' + esc(un) + '</span></td>'
+      + '<td><span class="urdu">' + esc(uf) + '</span></td>'
+      + '<td>' + g.khata + '</td>'
+      + '<td class="ctn">' + contactNumCell(c.owner) + '</td>'
+      + '<td class="ctn">' + contactThekCell(c) + '</td>'
+      + '<td class="num bold">' + fmtN(g.tot) + (g.nSeasons > 2 ? chowCountNote(g.nSeasons, "ur") : '') + '</td></tr>';
+  });
+  var h = letterhead("ur", title, "خریف 2025 + ربیع 2026", null, rows.length)
+    + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 17 نومبر 2026</div>'
+    + '<table class="ctlist"><colgroup><col style="width:4%"><col style="width:20%"><col style="width:18%"><col style="width:8%"><col style="width:17%"><col style="width:17%"><col style="width:16%"></colgroup>'
+    + '<thead><tr><th>نمبر</th><th>نام</th><th>ولدیت</th><th>کھاتہ نمبر</th><th>مالک کا نمبر</th><th>ٹھیکیدار (نام + نمبر)</th><th class="num">کل بقایا (روپے)</th></tr></thead><tbody>'
+    + rowsHtml
+    + '</tbody></table>'
+    + '<div class="urdu" dir="rtl" style="font-size:16px;margin-top:8px">نوٹ: کل بقایا میں جہاں لاگو ہو، خریف 2024 اور ربیع 2025 کا بقایا بھی شامل ہے۔ خالی جگہ پر نمبر ہاتھ سے لکھا جا سکتا ہے۔</div>';
+  doPrint(h, "ur");
+}
+$("pPatwari").addEventListener("click", printPatwariReport);
 $("pContacts").addEventListener("click", printContactList);
 $("pContactsView").addEventListener("click", function(){ switchView("contacts"); });
 $("cPrintBtn").addEventListener("click", printContactList);
@@ -1749,7 +1840,7 @@ function renderContacts(){
   }
   el.innerHTML = rows.map(function(g){
     var c = getContact(g.khata);
-    return '<div class="farmer" data-sid="' + g.rep.season_id + '" data-khata="' + g.khata + '">'
+    return '<div class="farmer" data-sid="' + g.rep.season_id + '" data-khata="' + g.khata + '" data-pkey="' + esc(String(payKey(g.rep))) + '">'
       + '<div class="khata"><div class="k">KHATA</div><div class="n">' + g.khata + '</div></div>'
       + '<div class="info"><div class="nm">' + esc(g.rep.name) + '</div>'
       + (g.rep.ur_name ? '<div class="urnm urdu">' + esc(g.rep.ur_name) + '</div>' : '')
@@ -1796,7 +1887,7 @@ function printReceipt(b, lang){
    Paid Date boxes for signing by hand — stamp + signature print on RECEIPTS
    only (user, 26 Oct 2026: "just receipts mein lgana hai").
    English only. The last date shown to
-   the farmer is ALWAYS 27 October 2026 (collection deadline), distinct
+   the farmer is ALWAYS 17 November 2026 (collection deadline), distinct
    from the bill's own Due Date box. Bills with no official PSID show
    'Manual Collection' (never a blank). */
 function printFarmerBill(b, lang){
@@ -1817,7 +1908,7 @@ function printFarmerBill(b, lang){
   }
   var dateBoxes = '<div style="text-align:right;font-size:12px;line-height:1.9">'
     + '<span style="border:1px solid #888;padding:3px 10px;display:inline-block">' + (b.issue ? 'Bill Date: ' + esc(b.issue) : 'Print Date: ' + nowDmy()) + '</span> '
-    + '<span style="border:1px solid #888;background:#fdeeda;padding:3px 10px;display:inline-block">Due Date: 27/10/2026</span>'
+    + '<span style="border:1px solid #888;background:#fdeeda;padding:3px 10px;display:inline-block">Due Date: 17/11/2026</span>'
     + '</div>';
   var upper = '<div>'
     + '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:21px;font-weight:800">E-Bill Abiana</div><div style="font-size:15px;margin-top:2px">Punjab Irrigation Department</div></div>' + dateBoxes + '</div>'
@@ -1836,13 +1927,13 @@ function printFarmerBill(b, lang){
     + '<tr style="background:#d9e8c9"><td style="border:1px solid #888;padding:5px 8px;font-weight:700">Total</td><td style="border:1px solid #888;padding:5px 8px"></td><td style="border:1px solid #888;padding:5px 8px"></td><td style="border:1px solid #888;padding:5px 8px;text-align:right;font-weight:700">' + fmtN(b.amt) + '</td></tr>'
     + '</tbody></table>'
     + '<div style="margin-bottom:12px">'
-    + sumRow("Current Amount", fmtN(b.amt), "")
+    + sumRow("Current Amount", fmtN(effAmt(b)), "")
     + (paid > 0 ? sumRow("Paid to Date", fmtN(paid), "") : "")
     + sumRow("Total Payable Amount", fmtN(rem), "#d9e8c9")
     + sumRow("Payable Amount (Within Due Date)", fmtN(payDue), "")
     + sumRow("Payable Amount (After Due Date)", fmtN(payAfter), "#fde8e8")
     + '</div>'
-    + '<div style="font-size:16px;font-weight:800;margin:14px 0 2px">Last Date for Payment: 27 October 2026</div>'
+    + '<div style="font-size:16px;font-weight:800;margin:14px 0 2px">Last Date for Payment: 17 November 2026</div>'
     + '<div style="font-size:12px;margin-bottom:18px">' + payLine + '</div>'
     + '<div style="display:flex;gap:28px;margin-bottom:6px">'
     + '<div style="flex:0 0 auto"><div style="font-size:11px;color:#444;margin-bottom:4px">Stamp</div><div style="border:1px solid #888;width:95px;height:60px"></div></div>'
@@ -1854,11 +1945,11 @@ function printFarmerBill(b, lang){
     + '<div style="font-size:15px;font-weight:800">E-Bill Abiana</div><div style="font-size:12px;margin-bottom:8px">Punjab Irrigation Department</div>'
     + '<div style="font-size:12.5px;margin-bottom:10px">PSID# ' + esc(psidVal) + '&nbsp;&nbsp;&nbsp;Consumer ID ' + esc(consVal) + '&nbsp;&nbsp;&nbsp;Khata # ' + b.khata + '&nbsp;&nbsp;&nbsp;Bill Month ' + esc(seasonVal) + '</div>'
     + '<div style="margin-bottom:10px">'
-    + sumRow("Current Amount", fmtN(b.amt), "")
+    + sumRow("Current Amount", fmtN(effAmt(b)), "")
     + sumRow("Payable Amount (Within Due Date)", fmtN(payDue), "")
     + sumRow("Payable Amount (After Due Date)", fmtN(payAfter), "")
     + '</div>'
-    + '<div style="font-size:13px;font-weight:800;margin-bottom:8px">Last Date for Payment: 27 October 2026</div>'
+    + '<div style="font-size:13px;font-weight:800;margin-bottom:8px">Last Date for Payment: 17 November 2026</div>'
     + '<div style="font-size:12px">' + payLine + '</div>'
     + '</div>';
   var h = '<div style="color:#000;padding:4px;font-size:13px">'
@@ -1869,6 +1960,7 @@ function printFarmerBill(b, lang){
   doPrint(h, "en", true);
 }
 /* ==================== INIT ==================== */
+checkStorageHealth();  // v28: warn at boot if phone storage cannot save (a failed save must never look like a saved payment)
 fix264Correction();
 kindMigration();
 seedVideoStatuses();

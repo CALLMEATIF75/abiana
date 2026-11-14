@@ -1,13 +1,16 @@
 /* Abiana Manager — service worker (offline-capable; document is network-first
    so baked-data fixes reach the phone on the next open, assets cache-first) */
-var CACHE = 'abiana-manager-v27';
+var CACHE = 'abiana-manager-v28';
 var ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open(CACHE).then(function (c) {
+      /* v28: cache each file individually — one failed fetch must never kill
+         the whole install (that is how the map's offline cache broke: a
+         single missing precache file failed the entire install). */
       return Promise.all(ASSETS.map(function (u) {
-        return c.add(new Request(u, { cache: 'no-cache' }));
+        return c.add(new Request(u, { cache: 'no-cache' })).catch(function () { /* skip the bad file, keep the rest */ });
       }));
     }).then(function () { return self.skipWaiting(); })
   );
