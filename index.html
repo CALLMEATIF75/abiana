@@ -316,13 +316,14 @@ nav button.on .ic{filter:none}
 #printArea table.pw2 th.num{text-align:right}
 #printArea table.pw2 td.pw2-name{text-align:right}
 #printArea table.pw2 td.pw2-thek{text-align:center}
-#printArea table.pw2 td.pw2-seas{text-align:center;font-weight:700}
-#printArea table.pw2 th.pw2-seas{text-align:center}
+#printArea table.pw2 td.pw2-seas{text-align:center;font-weight:700;white-space:nowrap}
+#printArea table.pw2 th.pw2-seas{text-align:center;white-space:nowrap}
+#printArea table.pw2 th.pw2-no,#printArea table.pw2 td.pw2-no{white-space:nowrap}
 #printArea table.pw2 tbody tr:nth-child(even) td{background:#f7f8fa;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #printArea table.pw2 .urdu{font-size:16px;line-height:1.7}
-#printArea table.pw2 td.pw2-amt{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+#printArea table.pw2 td.pw2-amt{direction:ltr;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 #printArea table.pw2 .pw2-dash{color:#777}
-#printArea table.pw2 .ctnum{font-size:13.5px}
+#printArea table.pw2 .ctnum{font-size:13px}
 #printArea table.pw2 tr.tot td{background:#e9ebf0;border-top:3px double #000}
 </style>
 
@@ -1964,13 +1965,13 @@ function printChowkidar(){
    NA signature/footer — "ye just contact list hai". Per-farmer کل بقایا
    wala column waisa hi rehta hai. */
 function contactNumCell(num){
-  if(num) return '<span class="ctnum" dir="ltr">' + esc(num) + '</span>';
+  if(num) return '<span class="ctnum" dir="ltr">' + esc(fmtPhone(num)) + '</span>';
   return '<span class="ctblank">&nbsp;</span>';
 }
 function contactThekCell(c){
   if(!c.tkName) return contactNumCell(c.thekedar);
   var nm = '<span class="urdu">' + esc(c.tkName) + '</span>';
-  if(c.thekedar) return nm + '<br><span class="ctnum" dir="ltr">' + esc(c.thekedar) + '</span>';
+  if(c.thekedar) return nm + '<br><span class="ctnum" dir="ltr">' + esc(fmtPhone(c.thekedar)) + '</span>';
   return nm + '<span class="ctblank">&nbsp;</span>';
 }
 function printContactList(){
@@ -2052,6 +2053,7 @@ var URDU_WORDS = {
   shafaqat:"شفاقت", shakeel:"شکیل", shoukat:"شوکت", sohail:"سہیل",
   wali:"ولی", wala:"والا", waris:"وارث", wilayat:"ولایت", yaqoob:"یعقوب",
   zoja:"زوجہ", zahid:"زاہد", zubair:"زبیر", zulfiqar:"ذوالفقار", and:"اور",
+  jawad:"جواد", walad:"ولد", mohammad:"محمد",
   ud:"ال", ul:"ال"
 };
 function transliterateName(en){
@@ -2064,6 +2066,56 @@ function transliterateName(en){
     var k = w.toLowerCase().replace(/[^a-z]/g, "");
     return URDU_WORDS[k] || w;
   }).join(" ");
+}
+/* ==================== PATWARI DISPLAY FORMATTERS (14 Nov 2026, user screenshots) ===
+   The contact thekedar names on the user's phone are stored in BOTH scripts
+   (some typed in Urdu, some in Roman), and the baked farmer/father names mix
+   Title Case with ALL-CAPS. The report must render ONE language per table,
+   so every displayed name/number is normalized here — display-only, the
+   stored contacts and BILLS are never changed. */
+/* URDU→ROMAN reverse map, built by inverting URDU_WORDS (first Roman spelling
+   wins where two spellings share one Urdu word). */
+var ROMAN_WORDS = {};
+Object.keys(URDU_WORDS).forEach(function(k){ var v = URDU_WORDS[k]; if(!ROMAN_WORDS[v]) ROMAN_WORDS[v] = k; });
+ROMAN_WORDS["الدین"] = "Ud Deen";
+ROMAN_WORDS["الحق"] = "Ul Haq";
+/* Urdu name -> Roman ("ذوالفقار" -> "Zulfiqar", "محمد اکرم ولد ولی محمد" ->
+   "Muhammad Akram Walad Wali Muhammad"). Roman words pass through unchanged,
+   so an already-Roman name is untouched. Two-word Urdu values and the
+   collapsed phrases are mapped whole, before the per-word pass. */
+function romanizeName(ur){
+  if(!ur) return "";
+  var s = String(ur).trim();
+  s = s.replace(/امان اللہ/g, "Amanullah").replace(/بی بی/g, "Bibi")
+       .replace(/الدین/g, "Ud Deen").replace(/الحق/g, "Ul Haq");
+  return s.split(/\s+/).map(function(w){
+    return ROMAN_WORDS[w] || w;
+  }).join(" ");
+}
+/* Strip stray standalone digit tokens from a displayed name ("اصغر 132" ->
+   "اصغر"). Display-only: the stored contact is never changed. */
+function cleanName(s){
+  if(!s) return "";
+  return String(s).split(/\s+/).filter(function(w){ return !/^\d+$/.test(w); }).join(" ").replace(/\s+/g, " ").trim();
+}
+/* Title Case for Roman names in the report ("KHAIR UD DEEN" -> "Khair Ud
+   Deen", "Rana parvaiz" -> "Rana Parvaiz"). Urdu script has no case and
+   passes through untouched. */
+function titleCaseName(s){
+  if(!s) return "";
+  return String(s).split(/\s+/).map(function(w){
+    if(!w) return w;
+    var lw = w.toLowerCase();
+    return lw.charAt(0).toUpperCase() + lw.slice(1);
+  }).join(" ");
+}
+/* Normalize a Pakistani mobile to 0343-6497328 form (4 digits, dash, 7
+   digits). Numbers that are not 11 digits starting with 0 render as-is. */
+function fmtPhone(num){
+  if(!num) return "";
+  var d = String(num).replace(/\D/g, "");
+  if(d.length === 11 && d.charAt(0) === "0") return d.slice(0,4) + "-" + d.slice(4);
+  return String(num).trim();
 }
 /* ==================== PATWARI REPORT — professional register (14 Nov 2026) ====================
    A plain simple list (NOT an official report): just the farmers' abiana
@@ -2087,28 +2139,38 @@ function pw2Lang(){
   return lang;
 }
 /* Patwari-only name/father cell, ONE language at a time: Urdu uses the baked
-   ur_name/ur_father, else the transliteration; English uses the Roman name. */
+   ur_name/ur_father, else the transliteration; English uses the Roman name,
+   normalized to Title Case (the baked data mixes Title Case with ALL-CAPS).
+   Stray digit tokens are stripped from the display (never from the data). */
 function pw2NameCell(b, lang, father){
   var rn = father ? (b.father||"") : b.name;
   if(lang === "ur"){
     var un = father ? (b.ur_father || transliterateName(b.father||"")) : (b.ur_name || transliterateName(b.name));
-    return '<span class="urdu">' + esc(un) + '</span>';
+    return '<span class="urdu">' + esc(cleanName(un)) + '</span>';
   }
-  return esc(rn);
+  return esc(titleCaseName(cleanName(rn)));
 }
-/* Patwari-only owner-number cell: saved number, else a clean em dash. */
+/* Patwari-only owner-number cell: saved number (normalized to 0343-6497328
+   form), else a clean em dash. */
 function pw2NumCell(num){
-  if(num) return '<span class="ctnum" dir="ltr">' + esc(num) + '</span>';
+  if(num) return '<span class="ctnum" dir="ltr">' + esc(fmtPhone(num)) + '</span>';
   return '<span class="pw2-dash">—</span>';
 }
-/* Patwari-only thekedar cell, ONE language at a time: name (transliterated
-   for Urdu) + number (LTR); a missing part shows a clean em dash. */
+/* Patwari-only thekedar cell, ONE language at a time: the stored thekedar
+   name may be Urdu or Roman (the user's phone has both), so it is converted
+   to the report's language — Romanized for English, transliterated for Urdu
+   — then the number (normalized) follows on its own line. A missing part
+   shows a clean em dash. */
 function pw2ThekCell(c, lang){
   if(!c.tkName && !c.thekedar) return '<span class="pw2-dash">—</span>';
-  var nm = lang === "ur"
-    ? (c.tkName ? '<span class="urdu">' + esc(transliterateName(c.tkName)) + '</span>' : '')
-    : (c.tkName ? esc(c.tkName) : '');
-  if(c.thekedar) return nm + (nm ? '<br>' : '') + '<span class="ctnum" dir="ltr">' + esc(c.thekedar) + '</span>';
+  var nm = "";
+  if(c.tkName){
+    var tn = cleanName(c.tkName);
+    nm = lang === "ur"
+      ? '<span class="urdu">' + esc(transliterateName(tn)) + '</span>'
+      : esc(titleCaseName(romanizeName(tn)));
+  }
+  if(c.thekedar) return nm + (nm ? '<br>' : '') + '<span class="ctnum" dir="ltr">' + esc(fmtPhone(c.thekedar)) + '</span>';
   return nm;
 }
 /* One complete Patwari table in a single language (lang = "ur" or "en"). */
@@ -2140,7 +2202,7 @@ function pw2Table(lang){
   rows.forEach(function(g, i){
     var c = getContact(g.khata);
     grand += g.tot;
-    rowsHtml += '<tr><td>' + (i+1) + '</td>'
+    rowsHtml += '<tr><td class="pw2-no">' + (i+1) + '</td>'
       + '<td class="pw2-name">' + pw2NameCell(g.rep, lang, false) + '</td>'
       + '<td class="pw2-name">' + pw2NameCell(g.rep, lang, true) + '</td>'
       + '<td>' + g.khata + '</td>'
@@ -2150,8 +2212,8 @@ function pw2Table(lang){
       + '<td class="num bold pw2-amt">' + fmtN(g.tot) + '</td></tr>';
   });
   var h = head + pwHead
-    + '<div dir="' + dir + '"><table class="pw2"><colgroup><col style="width:4%"><col style="width:19%"><col style="width:16%"><col style="width:7%"><col style="width:14%"><col style="width:18%"><col style="width:6%"><col style="width:16%"></colgroup>'
-    + '<thead><tr><th>' + esc(T.hSr) + '</th><th>' + esc(T.hName) + '</th><th>' + esc(T.hFather) + '</th><th>' + esc(T.hKhata) + '</th><th>' + esc(T.hOwner) + '</th><th>' + esc(T.hThek) + '</th><th class="pw2-seas">' + esc(T.hSeas) + '</th><th class="num">' + esc(T.hTot) + '</th></tr></thead><tbody>'
+    + '<div dir="' + dir + '"><table class="pw2"><colgroup><col style="width:6%"><col style="width:18%"><col style="width:15%"><col style="width:7%"><col style="width:15%"><col style="width:17%"><col style="width:9%"><col style="width:13%"></colgroup>'
+    + '<thead><tr><th class="pw2-no">' + esc(T.hSr) + '</th><th>' + esc(T.hName) + '</th><th>' + esc(T.hFather) + '</th><th>' + esc(T.hKhata) + '</th><th>' + esc(T.hOwner) + '</th><th>' + esc(T.hThek) + '</th><th class="pw2-seas">' + esc(T.hSeas) + '</th><th class="num">' + esc(T.hTot) + '</th></tr></thead><tbody>'
     + rowsHtml
     + '<tr class="tot"><td colspan="7">' + esc(T.totLbl) + fmtN(rows.length) + esc(T.totFarmers) + '</td><td class="num bold">' + fmtN(grand) + '</td></tr>'
     + '</tbody></table></div>';
