@@ -9,20 +9,20 @@
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <style>
 :root{
-  --em:#065f46; --em2:#047857; --em3:#064e3b; --gold:#c9a227; --gold2:#d4af37;
-  --bg:#f2f5f3; --card:#ffffff; --ink:#14231c; --mut:#5d6f66; --line:#dde5e0;
+  --em:#065f46; --em2:#047857; --em3:#064e3b; --em4:#042f24; --gold:#c9a227; --gold2:#d4af37; --gold3:#8a6d14;
+  --bg:#e9f1ec; --card:#ffffff; --ink:#122019; --mut:#5d6f66; --line:#d8e2dc;
   --green:#15803d; --greenbg:#dcfce7; --amber:#b45309; --amberbg:#fef3c7;
-  --red:#b91c1c; --redbg:#fee2e2; --rad:14px;
+  --red:#b91c1c; --redbg:#fee2e2; --rad:16px;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:86px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;background:linear-gradient(180deg,#f5f9f6,#e9f1ec);color:var(--ink);padding-bottom:86px}
 button{font-family:inherit;cursor:pointer}
 input,select,textarea{font-family:inherit;font-size:16px}
 .urdu{font-family:"Noto Nastaliq Urdu","Segoe UI",serif}
 
 /* ---------- Header ---------- */
-header{position:sticky;top:0;z-index:40;background:linear-gradient(135deg,var(--em2),var(--em3));color:#fff;padding:12px 14px 12px;box-shadow:0 2px 10px rgba(0,0,0,.25);border-bottom:3px solid var(--gold)}
+header{position:sticky;top:0;z-index:40;background:linear-gradient(135deg,var(--em2),var(--em3) 55%,var(--em4));color:#fff;padding:12px 14px;box-shadow:0 2px 12px rgba(4,47,36,.35);border-bottom:3px solid var(--gold)}
 header .row{display:flex;align-items:center;gap:10px}
 header .logo{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:22px;border:1.5px solid var(--gold2);flex:0 0 auto}
 header h1{font-size:18px;margin:0;line-height:1.15}
@@ -32,21 +32,32 @@ header select{margin-left:auto;background:#fff;color:var(--em3);border:none;bord
 .seasonbar label{flex:0 0 auto;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gold2)}
 .seasonbar select{flex:1 1 auto;min-width:0;margin:0;max-width:none;background:#fff;color:var(--em3);border:none;border-radius:9px;padding:9px 10px;font-size:16px;font-weight:700}
 
+/* ---------- Sync pill + lock button (header, always visible) ---------- */
+.lockbtn{margin-left:auto;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:9px;padding:8px 11px;font-weight:700;font-size:13px;white-space:nowrap}
+.lockbtn:active{transform:scale(.97)}
+.syncpill{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:12px;font-weight:700;color:#e9f7ef;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 11px;width:max-content;max-width:100%}
+.syncpill .dot{width:8px;height:8px;border-radius:50%;background:#34d399;flex:0 0 auto}
+.syncpill.busy .dot{background:#fbbf24;animation:spulse 1s ease-in-out infinite}
+.syncpill.off .dot{background:#f87171}
+@keyframes spulse{50%{opacity:.35}}
+
 /* ---------- Layout ---------- */
 main{max-width:760px;margin:0 auto;padding:14px 12px}
 .view{display:none}
-.view.active{display:block}
+.view.active{display:block;animation:fadein .18s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
 h2.sec{font-size:16px;margin:16px 2px 10px;color:var(--em3)}
 .mut{color:var(--mut)} .small{font-size:12.5px}
 
 /* ---------- Cards ---------- */
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:14px 14px 12px;box-shadow:0 1px 3px rgba(6,78,59,.06)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:14px 14px 12px;box-shadow:0 2px 10px rgba(6,78,59,.07);transition:box-shadow .15s}
 .card .lbl{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
-.card .val{font-size:21px;font-weight:800;margin-top:4px;color:var(--em3)}
-.card.gold .val{color:#8a6d14}
+.card .val{font-size:22px;font-weight:800;margin-top:4px;color:var(--em3);font-variant-numeric:tabular-nums}
+.card.gold{background:linear-gradient(135deg,#fffdf4,#fff8e1);border-color:#e8d9a0}
+.card.gold .val{color:var(--gold3)}
 .card.wide{grid-column:1/-1}
-.progress{height:12px;background:#e6ece8;border-radius:99px;overflow:hidden;margin-top:9px}
+.progress{height:14px;background:#e6ece8;border-radius:99px;overflow:hidden;margin-top:9px}
 .progress>div{height:100%;background:linear-gradient(90deg,var(--em2),var(--gold2));border-radius:99px;transition:width .3s}
 .counts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
 .countbox{border-radius:var(--rad);padding:12px 8px;text-align:center;border:1px solid var(--line)}
@@ -60,9 +71,22 @@ h2.sec{font-size:16px;margin:16px 2px 10px;color:var(--em3)}
 .seasoncard .grid{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
 .seasoncard .grid b{display:block;font-size:15.5px}
 
+/* ---------- Deadline banner (dashboard hero) ---------- */
+.deadline{background:linear-gradient(135deg,var(--em3),var(--em4));color:#fff;border-radius:var(--rad);padding:14px 16px;margin-bottom:12px;border:1px solid var(--gold);box-shadow:0 3px 14px rgba(4,47,36,.25);display:flex;align-items:center;gap:14px}
+.deadline .dl-ic{font-size:30px;flex:0 0 auto}
+.deadline .dl-lbl{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--gold2)}
+.deadline .dl-val{font-size:17px;font-weight:800;margin-top:2px}
+.deadline .dl-days{margin-left:auto;text-align:right;flex:0 0 auto}
+.deadline .dl-days b{display:block;font-size:26px;font-weight:800;color:var(--gold2);font-variant-numeric:tabular-nums;line-height:1}
+.deadline .dl-days span{font-size:11px;color:#cfe8da;font-weight:700}
+.deadline.passed{opacity:.92}
+
 /* ---------- Lists ---------- */
-.farmer{display:flex;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:11px 12px;margin-bottom:9px;align-items:flex-start;cursor:pointer}
+.farmer{display:flex;gap:11px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--rad);padding:11px 12px;margin-bottom:9px;align-items:flex-start;cursor:pointer;transition:box-shadow .15s}
 .farmer:active{transform:scale(.995)}
+.farmer.st-Paid{border-left-color:var(--green)}
+.farmer.st-Partial{border-left-color:var(--amber)}
+.farmer.st-Unpaid{border-left-color:var(--red)}
 .khata{flex:0 0 auto;background:var(--em);color:#fff;border-radius:10px;min-width:46px;text-align:center;padding:7px 4px}
 .khata .k{font-size:9.5px;letter-spacing:.6px;opacity:.85;font-weight:700}
 .khata .n{font-size:16.5px;font-weight:800;line-height:1.1}
@@ -94,6 +118,7 @@ h2.sec{font-size:16px;margin:16px 2px 10px;color:var(--em3)}
 
 /* ---------- Buttons & forms ---------- */
 .btn{display:inline-block;border:none;border-radius:11px;padding:12px 18px;font-size:14.5px;font-weight:700;background:var(--em);color:#fff}
+.btn:active{transform:scale(.98)}
 .btn.gold{background:var(--gold);color:#231a02}
 .btn.ghost{background:#fff;color:var(--em3);border:1.5px solid var(--line)}
 .btn.red{background:var(--red)}
@@ -110,7 +135,7 @@ h2.sec{font-size:16px;margin:16px 2px 10px;color:var(--em3)}
 nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--line);display:flex;box-shadow:0 -2px 12px rgba(0,0,0,.07);padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;background:none;border:none;padding:9px 2px 8px;font-size:11px;font-weight:700;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button .ic{font-size:20px;line-height:1}
-nav button.on{color:var(--em2)}
+nav button.on{color:var(--em2);box-shadow:inset 0 3px 0 var(--gold)}
 nav button.on .ic{filter:none}
 
 /* ---------- Overlays (detail / add bill / lock) ---------- */
@@ -251,6 +276,7 @@ nav button.on .ic{filter:none}
       <h1>Abiana Manager</h1>
       <div class="sub">Muhammad Atif · Numberdar · Chak 130/1-L</div>
     </div>
+    <button class="lockbtn" id="lockBtnTop" title="Lock app">🔒 Lock</button>
   </div>
   <div class="seasonbar">
     <label for="seasonSelect">Season</label>
@@ -258,14 +284,20 @@ nav button.on .ic{filter:none}
       <option value="kharif2024">Kharif 2024</option>
       <option value="rabi2025">Rabi 2025</option>
       <option value="kharif2025">Kharif 2025 — Last Date: 15 Jun 2026</option>
-      <option value="rabi2026">Rabi 2026 — Last Date: 27 Oct 2026</option>
+      <option value="rabi2026">Rabi 2026 — Last Date: 17 Nov 2026</option>
     </select>
   </div>
+  <div class="syncpill" id="syncPill"><span class="dot"></span><span id="syncPillText">Sync…</span></div>
 </header>
 
 <main>
   <!-- ======== DASHBOARD ======== -->
   <section class="view active" id="view-dashboard">
+    <div class="deadline" id="deadlineCard">
+      <div class="dl-ic">📅</div>
+      <div><div class="dl-lbl">Rabi 2026 — Last Date</div><div class="dl-val" id="dDeadline">17 November 2026</div></div>
+      <div class="dl-days"><b id="dDeadlineDays">—</b><span id="dDeadlineDaysLbl">days left</span></div>
+    </div>
     <div class="cards">
       <div class="card"><div class="lbl">Total Abiana</div><div class="val" id="dTotal">—</div></div>
       <div class="card"><div class="lbl">Paid (Deposited)</div><div class="val" id="dJama">—</div></div>
@@ -848,13 +880,43 @@ function showLock(){
   var t = $("pinEnter"); if(t) t.focus();
 }
 function hideLock(){ $("lockScreen").classList.remove("open"); }
+/* ==================== LOCK MODEL (WhatsApp-style, 14 Nov 2026) ====================
+   Reload must NOT ask for the PIN again; closing the app/tab or locking the
+   phone MUST lock it. The unlock flag lives in sessionStorage only: it
+   survives reloads in the same tab but the browser clears it automatically
+   when the tab/app is closed. Only a boolean is stored — the PIN itself is
+   never stored here. If the app is hidden (phone locked / app switched away)
+   for more than 60 seconds, the next visible moment locks it again. */
+var LS_UNLOCK_FLAG = "abiana_unlocked";
+var LS_HIDDEN_AT = "abiana_hidden_at";
+var LOCK_IDLE_MS = 60 * 1000;
+function sessionStore(){ try{ return window.sessionStorage; }catch(e){ return null; } }
+function isUnlocked(){ var s = sessionStore(); return !!(s && s.getItem(LS_UNLOCK_FLAG) === "1"); }
+function setUnlocked(){ var s = sessionStore(); if(s){ try{ s.setItem(LS_UNLOCK_FLAG, "1"); }catch(e){} } }
+function clearUnlocked(){ var s = sessionStore(); if(s){ try{ s.removeItem(LS_UNLOCK_FLAG); }catch(e){} } }
+function lockApp(){ clearUnlocked(); showLock(); }
+function onVisibilityChange(){
+  var s = sessionStore();
+  if(document.hidden){
+    if(s){ try{ s.setItem(LS_HIDDEN_AT, String(Date.now())); }catch(e){} }
+    return;
+  }
+  if(!isUnlocked()) return;
+  var at = 0;
+  if(s){ try{ at = Number(s.getItem(LS_HIDDEN_AT) || 0); }catch(e){} }
+  if(s){ try{ s.removeItem(LS_HIDDEN_AT); }catch(e){} }
+  if(at && (Date.now() - at > LOCK_IDLE_MS)) lockApp();
+}
+if(typeof document !== "undefined" && document.addEventListener){
+  document.addEventListener("visibilitychange", onVisibilityChange);
+}
 $("pinUnlockBtn").addEventListener("click", tryUnlock);
 $("pinEnter").addEventListener("keydown", function(e){ if(e.key==="Enter") tryUnlock(); });
 function tryUnlock(){
   var a = $("pinEnter").value.trim();
   if(!a){ return; }
   hashPin(a).then(function(h){
-    if(h === lsGetRaw(LS_PIN)){ $("pinEnter").value=""; $("pinUnlockMsg").textContent = ""; hideLock(); try{ pullContacts(); }catch(e){} }
+    if(h === lsGetRaw(LS_PIN)){ $("pinEnter").value=""; $("pinUnlockMsg").textContent = ""; setUnlocked(); hideLock(); try{ pullContacts(); }catch(e){} }
     else { $("pinUnlockMsg").textContent = "Wrong PIN. Try again."; $("pinEnter").value=""; }
   });
 }
@@ -890,6 +952,18 @@ function seasonStats(season){
   bs.forEach(function(b){ tot += effAmt(b); var sp = billSplit(b); jama += sp.jama; paas += sp.paas; coll += sp.jama + sp.paas; var s = statusOf(b); if(s==="Paid") np++; else if(s==="Partial") npa++; else nu++; });
   return { bills:bs, total:tot, coll:coll, jama:jama, paas:paas, rem:tot-coll, paid:np, partial:npa, unpaid:nu, pct: tot? Math.round(coll/tot*1000)/10 : 0 };
 }
+/* Days left to the Rabi 2026 last date (17 Nov 2026). Pure date math on
+   local midnight so the count is stable through the day. */
+var RABI_LAST_DATE_ISO = "2026-11-17";
+function deadlineDaysLeft(){
+  var now = new Date(); var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var p = RABI_LAST_DATE_ISO.split("-"); var last = new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+  var diff = Math.round((last - today) / 86400000);
+  if(diff > 1) return { days: diff, label: "days left", overdue: false };
+  if(diff === 1) return { days: 1, label: "day left", overdue: false };
+  if(diff === 0) return { days: 0, label: "last date today", overdue: false };
+  return { days: Math.abs(diff), label: "days overdue", overdue: true };
+}
 function renderDashboard(){
   var st = seasonStats(seasonFilter);
   $("dTotal").textContent = fmt(st.total);
@@ -900,6 +974,11 @@ function renderDashboard(){
   $("dPct").textContent = st.pct + "%";
   $("dProg").style.width = Math.min(100, st.pct) + "%";
   $("dPaid").textContent = st.paid; $("dPartial").textContent = st.partial; $("dUnpaid").textContent = st.unpaid;
+  /* Deadline countdown (enhancement, 14 Nov 2026): Rabi 2026 last date 17 Nov 2026. */
+  var dl = deadlineDaysLeft();
+  $("dDeadlineDays").textContent = dl.days;
+  $("dDeadlineDaysLbl").textContent = dl.label;
+  $("deadlineCard").classList.toggle("passed", dl.overdue);
   var sc = "";
   [seasonFilter].forEach(function(sid){
     var s = seasonStats(sid);
@@ -933,7 +1012,7 @@ function matchSearch(b){
 }
 function farmerRow(b){
   var st = statusOf(b), paid = paidCapped(b), rem = remaining(b);
-  return '<div class="farmer" data-sid="' + b.season_id + '" data-khata="' + b.khata + '" data-pkey="' + esc(String(payKey(b))) + '">'
+  return '<div class="farmer st-' + st + '" data-sid="' + b.season_id + '" data-khata="' + b.khata + '" data-pkey="' + esc(String(payKey(b))) + '">'
     + '<div class="khata"><div class="k">KHATA</div><div class="n">' + b.khata + '</div></div>'
     + '<div class="info"><div class="nm">' + esc(b.name) + (b.seeded ? ' <span style="font-size:11px;color:#b3261e;font-weight:700">[Baqaya bill]</span>' : '') + '</div>'
     + (b.ur_name ? '<div class="urnm urdu">' + esc(b.ur_name) + '</div>' : '')
@@ -965,6 +1044,11 @@ function renderFarmers(){
   bindFarmerRows($("farmersList"));
 }
 
+/* Refresh every list the Numberdar sees after a payment/status change, so a
+   paid bill vanishes from the Baqaya list at once — no reload needed. The
+   detail view itself is re-rendered separately by renderDetail(). */
+function refreshLists(){ renderDashboard(); renderFarmers(); renderContacts(); }
+
 /* ==================== FARMER DETAIL ==================== */
 function openDetail(b){
   currentBill = b; editPayIdx = -1;
@@ -972,7 +1056,7 @@ function openDetail(b){
   renderDetail();
   $("detailOverlay").classList.add("open");
 }
-function closeDetail(){ $("detailOverlay").classList.remove("open"); currentBill = null; renderDashboard(); renderFarmers(); }
+function closeDetail(){ $("detailOverlay").classList.remove("open"); currentBill = null; refreshLists(); }
 $("detailBack").addEventListener("click", closeDetail);
 
 /* Owner Edit control (22 Oct 2026): set a bill's whole status in one tap.
@@ -1071,25 +1155,25 @@ function renderDetail(){
   if(mf) mf.addEventListener("click", function(){
     if(confirm("Mark Khata " + b.khata + " (" + b.name + ") as FULLY PAID with a payment of " + fmt(remaining(b)) + "?")){
       addPayment(b, remaining(b), todayStr(), "Full payment");
-      renderDetail(); alert("Marked as Paid ✓");
+      renderDetail(); refreshLists(); alert("Marked as Paid ✓");
     }
   });
   var spB = $("stPaidBtn");
   if(spB) spB.addEventListener("click", function(){
     if(confirm("Remove Khata " + b.khata + " (" + b.name + ") from Baqaya and mark it FULLY PAID (Jama) " + fmt(effAmt(b)) + "? Existing payment entries will be replaced.")){
-      setBillStatus(b, "paid"); renderDetail(); alert("Status: Paid ✓ — bill Baqaya list se hat gaya.");
+      setBillStatus(b, "paid"); renderDetail(); refreshLists(); alert("Status: Paid ✓ — bill Baqaya list se hat gaya.");
     }
   });
   var scB = $("stCollBtn");
   if(scB) scB.addEventListener("click", function(){
     if(confirm("Mark Khata " + b.khata + " (" + b.name + ") as COLLECTED (Mere Paas) " + fmt(effAmt(b)) + "? Existing payment entries will be replaced.")){
-      setBillStatus(b, "collected"); renderDetail(); alert("Status: Collected ✓");
+      setBillStatus(b, "collected"); renderDetail(); refreshLists(); alert("Status: Collected ✓");
     }
   });
   var suB = $("stUnpaidBtn");
   if(suB) suB.addEventListener("click", function(){
     if(confirm("Restore Khata " + b.khata + " (" + b.name + ") to Baqaya (Unpaid)? ALL its payment entries will be removed.")){
-      setBillStatus(b, "unpaid"); renderDetail(); alert("Status: Unpaid ✓ — bill Baqaya list mein wapas agaya.");
+      setBillStatus(b, "unpaid"); renderDetail(); refreshLists(); alert("Status: Unpaid ✓ — bill Baqaya list mein wapas agaya.");
     }
   });
   var ctS = $("ctSaveBtn");
@@ -1101,7 +1185,7 @@ function renderDetail(){
   for(var d=0; d<delBtns.length; d++){ (function(btn){ btn.addEventListener("click", function(){
     var i = Number(btn.getAttribute("data-del"));
     if(confirm("Delete this payment of " + fmt(pays[i].amount) + "?")){
-      payments[b.season_id][payKey(b)].splice(i,1); savePayments(); if(editPayIdx===i) editPayIdx=-1; renderDetail();
+      payments[b.season_id][payKey(b)].splice(i,1); savePayments(); if(editPayIdx===i) editPayIdx=-1; renderDetail(); refreshLists();
     }
   }); })(delBtns[d]); }
   var edBtns = $("detailBody").querySelectorAll("[data-edit]");
@@ -1118,12 +1202,12 @@ function renderDetail(){
     if(!amt || amt <= 0){ alert("Please enter a valid amount."); return; }
     if(editPayIdx >= 0){
       payments[b.season_id][payKey(b)][editPayIdx] = { amount:amt, date:date, note:note, kind:kind, ts:payments[b.season_id][payKey(b)][editPayIdx].ts || Date.now() };
-      savePayments(); editPayIdx = -1; renderDetail(); return;
+      savePayments(); editPayIdx = -1; renderDetail(); refreshLists(); return;
     }
     var remNow = remaining(b);
     if(amt > remNow && !confirm("Warning: This payment (" + fmt(amt) + ") is more than the remaining amount (" + fmt(remNow) + "). The extra will be recorded but the bill will simply show as Paid. Continue?")) return;
     if(amt < remNow && !confirm("Ye raqam baqaya (" + fmt(remNow) + ") se kam hai — bill Partial rahega, poora Paid nahi hoga. Continue?")) return;
-    addPayment(b, amt, date, note, kind); renderDetail();
+    addPayment(b, amt, date, note, kind); renderDetail(); refreshLists();
   });
   $("rcLang").addEventListener("change", function(){ printLang = this.value; lsSetRaw(LS_LANG, printLang); $("pLang").value = printLang; });
   $("printReceiptBtn").addEventListener("click", function(){ printReceipt(b, printLang); });
@@ -1205,7 +1289,8 @@ $("resetBtn").addEventListener("click", function(){
   if(!confirm("Are you absolutely sure? Export a backup first if you need the records. Press OK to delete all payments permanently.")) return;
   payments = {}; savePayments(); renderDashboard(); renderFarmers(); alert("All payments have been reset.");
 });
-$("lockBtn").addEventListener("click", function(){ showLock(); });
+$("lockBtn").addEventListener("click", function(){ lockApp(); });
+$("lockBtnTop").addEventListener("click", function(){ lockApp(); });
 
 /* ==================== APP INSTALL & UPDATE (Settings) ==================== */
 var APP_VERSION = "v28";
@@ -1309,14 +1394,40 @@ function fmtSyncTime(iso){
     return ddmmyyyy(ymd) + " " + String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
   }catch(e){ return String(iso || ""); }
 }
-function setSyncStatus(force){
-  var el = $("syncStatus"); if(!el) return;
-  if(force === "syncing"){ el.textContent = "Sync ho raha hai… / Syncing…"; return; }
-  if(force === "done"){ el.textContent = "Sync ho gaya ✓ — Last sync: " + fmtSyncTime(lsGetRaw(LS_SYNC_LAST)); return; }
-  if(typeof navigator !== "undefined" && navigator.onLine === false){ el.textContent = "Offline — net ate hi sync ho jayega"; return; }
-  if(syncIsDirty()){ el.textContent = "Sync baqi hai — taaza hisaab abhi Kai tak nahi gaya"; return; }
+/* Payments recorded since the last successful sync — what is still waiting
+   to be uploaded. The sync uploads the whole backup each time, so this
+   counts the changed entries (a useful, honest proxy). */
+function pendingSyncCount(){
   var last = lsGetRaw(LS_SYNC_LAST);
-  el.textContent = last ? ("Last sync: " + fmtSyncTime(last) + " ✓") : "Abhi tak sync nahi hua";
+  var lastMs = 0;
+  if(last){ var t = Date.parse(last); if(!isNaN(t)) lastMs = t; }
+  var n = 0;
+  allBills().forEach(function(b){ getPays(b).forEach(function(p){ if((p.ts||0) > lastMs) n++; }); });
+  return n;
+}
+function setSyncStatus(force){
+  /* Always-visible header pill + the detailed Settings line stay in sync.
+     Pill states: "" = Saved (green), "busy" = Saving/pending (amber pulse),
+     "off" = Offline (red). The pill is short; the Settings line keeps the
+     full detail (last sync time, pending count). */
+  var el = $("syncStatus");
+  var pill = $("syncPill"), pillText = $("syncPillText");
+  var pillState = "", pillMsg = "";
+  if(force === "syncing"){ pillState = "busy"; pillMsg = "Saving…"; if(el) el.textContent = "Sync ho raha hai… / Syncing…"; }
+  else if(force === "done"){ pillState = ""; pillMsg = "Saved ✓"; if(el) el.textContent = "Sync ho gaya ✓ — Last sync: " + fmtSyncTime(lsGetRaw(LS_SYNC_LAST)); }
+  else if(typeof navigator !== "undefined" && navigator.onLine === false){
+    var n = pendingSyncCount();
+    pillState = "off"; pillMsg = n > 0 ? ("Offline — " + n + " payment" + (n===1 ? "" : "s") + " waiting") : "Offline";
+    if(el) el.textContent = n > 0 ? ("Offline — net ate hi " + n + " payment(s) sync ho jayenge") : "Offline — net ate hi sync ho jayega";
+  }
+  else if(syncIsDirty()){ pillState = "busy"; pillMsg = "Sync pending…"; if(el) el.textContent = "Sync baqi hai — taaza hisaab abhi Kai tak nahi gaya"; }
+  else {
+    var last = lsGetRaw(LS_SYNC_LAST);
+    pillState = ""; pillMsg = "Saved ✓";
+    if(el) el.textContent = last ? ("Last sync: " + fmtSyncTime(last) + " ✓") : "Abhi tak sync nahi hua";
+  }
+  if(pill){ pill.className = "syncpill" + (pillState ? " " + pillState : ""); }
+  if(pillText) pillText.textContent = pillMsg;
 }
 function syncNow(){
   if(syncInFlight) return Promise.resolve(false);
@@ -1341,6 +1452,7 @@ function syncAttemptOnLoad(){ if(syncIsDirty()) syncNow(); }
 function syncOnOnline(){ if(syncIsDirty()) syncNow(); else setSyncStatus(); }
 if(typeof window !== "undefined" && window.addEventListener){
   window.addEventListener("online", syncOnOnline);
+  window.addEventListener("offline", function(){ setSyncStatus(); });
   window.addEventListener("load", syncAttemptOnLoad);
 }
 $("syncBtn").addEventListener("click", function(){ syncNow(); });
@@ -1776,30 +1888,29 @@ function printContactList(){
     + '<div class="urdu" dir="rtl" style="font-size:16px;margin-top:8px">نوٹ: کل بقایا میں جہاں لاگو ہو، خریف 2024 اور ربیع 2025 کا بقایا بھی شامل ہے۔ خالی جگہ پر نمبر ہاتھ سے لکھا جا سکتا ہے۔</div>';
   doPrint(h, "ur");
 }
-/* ==================== PATWARI REPORT (owner, 14 Nov 2026) ====================
-   Urdu print of EVERY farmer who still owes money — number saved ho ya na
-   ho (NO number filter, unlike the Contact Numbers list above). Father
-   (walidiyat) is its own column. A number that is not saved yet prints as
-   a dotted write-in line so it can be filled in by hand with a pen. Same
-   cross-season roll-up as the Chowkidar Copy (farmerTotals), so the totals
-   reconcile — and wrong bills (Numberdar's 14 Nov lists) never appear,
-   because allBills() already excludes them. No grand-total line, no
-   signature/footer — "ye just patwari report hai". */
+/* ==================== PATWARI REPORT (plain list, 14 Nov 2026) ====================
+   NOT an official report — just the farmers' abiana amounts + contact details
+   so the patwari can call them. Plain list only: a simple title with the
+   village + date, the table, and a totals row. NO letterhead, NO addressee,
+   NO covering line/paragraph, NO deadline line, NO name/signature block,
+   NO stamp/signature images (those are receipts only). Wrong bills never
+   appear (farmerTotals -> allBills exclusion). Numbers not saved yet print
+   as dotted write-in lines. */
 function printPatwariReport(){
   var rows = farmerTotals();
-  var title = "بقایا آبیانہ — پٹواری رپورٹ";
+  var head = '<div class="rt"><span class="urdu">بقایا آبیانہ — چک نمبر 130/1-L</span></div>'
+    + '<div class="urdu" dir="rtl" style="text-align:center;font-size:15px;margin:2px 0">تحصیل خانپور، ضلع رحیم یار خان</div>'
+    + '<div style="text-align:center;font-size:12.5px;margin:0 0 8px">Date: ' + nowDmy() + '</div>';
   if(!rows.length){
-    var h0 = letterhead("ur", title, "خریف 2025 + ربیع 2026", null, 0)
-      + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 17 نومبر 2026</div>'
-      + '<div class="urdu" dir="rtl" style="font-size:18px;text-align:center;margin:26px 0">کوئی بقایا نہیں — سب کسان clear ہیں۔</div>';
-    doPrint(h0, "ur");
+    doPrint(head + '<div class="urdu" dir="rtl" style="font-size:18px;text-align:center;margin:26px 0">کوئی بقایا نہیں — سب کسان clear ہیں۔</div>', "ur");
     return;
   }
-  var rowsHtml = "";
+  var rowsHtml = "", grand = 0;
   rows.forEach(function(g, i){
     var c = getContact(g.khata);
     var un = g.rep.ur_name || g.rep.name;
     var uf = g.rep.ur_father || g.rep.father || "";
+    grand += g.tot;
     rowsHtml += '<tr><td>' + (i+1) + '</td>'
       + '<td><span class="urdu">' + esc(un) + '</span></td>'
       + '<td><span class="urdu">' + esc(uf) + '</span></td>'
@@ -1808,13 +1919,12 @@ function printPatwariReport(){
       + '<td class="ctn">' + contactThekCell(c) + '</td>'
       + '<td class="num bold">' + fmtN(g.tot) + (g.nSeasons > 2 ? chowCountNote(g.nSeasons, "ur") : '') + '</td></tr>';
   });
-  var h = letterhead("ur", title, "خریف 2025 + ربیع 2026", null, rows.length)
-    + '<div class="chowline urdu" dir="rtl">آخری تاریخ: 17 نومبر 2026</div>'
+  var h = head
     + '<table class="ctlist"><colgroup><col style="width:4%"><col style="width:20%"><col style="width:18%"><col style="width:8%"><col style="width:17%"><col style="width:17%"><col style="width:16%"></colgroup>'
     + '<thead><tr><th>نمبر</th><th>نام</th><th>ولدیت</th><th>کھاتہ نمبر</th><th>مالک کا نمبر</th><th>ٹھیکیدار (نام + نمبر)</th><th class="num">کل بقایا (روپے)</th></tr></thead><tbody>'
     + rowsHtml
-    + '</tbody></table>'
-    + '<div class="urdu" dir="rtl" style="font-size:16px;margin-top:8px">نوٹ: کل بقایا میں جہاں لاگو ہو، خریف 2024 اور ربیع 2025 کا بقایا بھی شامل ہے۔ خالی جگہ پر نمبر ہاتھ سے لکھا جا سکتا ہے۔</div>';
+    + '<tr class="tot"><td colspan="6">کل — ' + fmtN(rows.length) + ' کسان</td><td class="num bold">' + fmtN(grand) + '</td></tr>'
+    + '</tbody></table>';
   doPrint(h, "ur");
 }
 $("pPatwari").addEventListener("click", printPatwariReport);
@@ -1967,7 +2077,7 @@ seedVideoStatuses();
 fixOwner22Oct();
 fixSeededCustomNames();
 setSeason(seasonFilter);
-fixBuiltinPin().then(function(){ showLock(); });
+fixBuiltinPin().then(function(){ if(!isUnlocked()) showLock(); });
 if("serviceWorker" in navigator && (location.protocol==="http:" || location.protocol==="https:")){
   /* Prompt updates (stale-names fix, 22 Oct 2026): bill data is baked into
      this document, and the service worker used to serve its cached copy
