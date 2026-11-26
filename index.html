@@ -384,7 +384,7 @@ nav button.on .ic{filter:none}
 <header>
   <div class="row">
     <div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5C12 2.5 5.5 10 5.5 15a6.5 6.5 0 0 0 13 0C18.5 10 12 2.5 12 2.5Z" fill="#f59e0b"/></svg></div>
-    <span class="verchip">v29</span>
+    <span class="verchip">v30</span>
     <div>
       <h1>Abiana Manager</h1>
       <div class="sub">Muhammad Atif · Numberdar · Chak 130/1-L</div>
@@ -475,6 +475,7 @@ nav button.on .ic{filter:none}
                ("All Outstanding" first, then newest season first), so a new
                season never needs a hand-added option here. -->
         </select>
+        <p class="small mut" id="kh26PrintNote" style="margin-top:6px"></p>
       </div>
       <div class="fld">
         <label>Report Type</label>
@@ -514,6 +515,12 @@ nav button.on .ic{filter:none}
       <h3>➕ Missing Bill</h3>
       <p class="small mut">If a bill is missing from the list (for example one dropped from a later bill set), add it here. It will be included in every total, list and printout.</p>
       <button class="btn block" id="addBillBtn2">Add Missing Bill</button>
+    </div>
+    <div class="panel">
+      <h3>🌾 Seasons — Recovery</h3>
+      <p class="small mut">Kharif 2026 bills (159 bills, Rs 1,975,083) are in the app, but recovery has not started yet. Until you start it, Kharif 2026 stays out of the unpaid list, Patwari Report, Chowkidar Copy, Contacts list and dashboard totals. The bills are safe — nothing is deleted. You can still open Kharif 2026 directly from the season selector to see its bills.</p>
+      <button class="btn block gold" id="kh26StartBtn">▶ Start Kharif 2026 Recovery</button>
+      <p class="small" id="kh26Status" style="margin-top:8px"></p>
     </div>
     <div class="panel">
       <h3>💾 Backup</h3>
@@ -637,7 +644,8 @@ var SEASON_CROP = {
 /* ==================== STORAGE ==================== */
 var LS_PAY = "abiana_payments_v1", LS_CUSTOM = "abiana_custom_bills_v1",
     LS_PIN = "abiana_pin_hash", LS_LANG = "abiana_print_lang", LS_SEASON = "abiana_season",
-    LS_CONTACTS = "abiana_contacts_v1";
+    LS_CONTACTS = "abiana_contacts_v1",
+    LS_KH26_STARTED = "abiana_kharif2026_started_v1";
 function lsGet(k, dflt){ try{ var v = localStorage.getItem(k); return v ? JSON.parse(v) : dflt; }catch(e){ return dflt; } }
 /* Storage failure must NEVER look like a saved payment (v28, 14 Nov 2026):
    if localStorage refuses a write (full/blocked storage), warn the Numberdar
@@ -712,6 +720,18 @@ function effAmt(b){
 var SEASON_LAST_DATE = { kharif2025:"15/06/2026", rabi2026:"17/11/2026", kharif2026:"19/05/2027" };
 function seasonLastDate(sid){ return SEASON_LAST_DATE[sid] || (SEASONS[sid] ? SEASONS[sid].due : ""); }
 function lastDateOf(b){ return seasonLastDate(b.season_id); }
+/* KHARIF 2026 RECOVERY TOGGLE (Numberdar, 26 Nov 2026): Kharif 2026 bills
+   exist in the app (159 bills, due 19/05/2027) but recovery has NOT started
+   yet, so they stay out of every combined/outstanding view — the unpaid list,
+   Patwari Report, Chowkidar Copy, Contacts list and the dashboard "Needs
+   Attention" list — until the Numberdar flips the switch in Settings →
+   Seasons. Explicit per-season views (dashboard season selector, Print Centre
+   season pick, a single farmer's bill) still show Kharif 2026, because the
+   Numberdar asked to see that season. Default OFF: a fresh install hides
+   Kharif 2026 from outstanding, which is the safe direction — the bills
+   themselves are never deleted. */
+function kharif2026Started(){ return lsGetRaw(LS_KH26_STARTED) === "1"; }
+function seasonStarted(sid){ return sid !== "kharif2026" || kharif2026Started(); }
 /* Latest season (in SEASON_ORDER) that has a last date, and that date —
    the operative deadline for cross-season prints (Chowkidar Copy, Contact
    Numbers List). Single source of truth: SEASON_LAST_DATE. */
@@ -733,7 +753,7 @@ var WRONG_BILLS = {
 function isWrongBill(b){ var w = WRONG_BILLS[b.season_id]; return !!w && w.indexOf(b.khata) !== -1; }
 
 function allBills(){ return BILLS.concat(customBills).filter(function(b){ return !isWrongBill(b); }); }
-function billsFor(season){ var a = allBills(); if(season && season!=="all") a = a.filter(function(b){ return b.season_id===season; }); return a.slice().sort(function(x,y){ return x.khata - y.khata; }); }
+function billsFor(season){ var a = allBills(); if(season && season!=="all") a = a.filter(function(b){ return b.season_id===season; }); else a = a.filter(function(b){ return seasonStarted(b.season_id); }); return a.slice().sort(function(x,y){ return x.khata - y.khata; }); }
 function findBill(seasonId, khata){ var a = allBills(); for(var i=0;i<a.length;i++){ if(a[i].season_id===seasonId && a[i].khata===khata) return a[i]; } return null; }
 /* pkey-aware lookup (v28, 14 Nov 2026 — Bug 1 fix): a khata can hold TWO
    bills in one season (the original + a seeded baqaya bill, e.g. Rabi 2026
@@ -1136,6 +1156,19 @@ function setSeason(sid){
   renderDashboard(); renderFarmers();
 }
 $("seasonSelect").addEventListener("change", function(){ setSeason(this.value); });
+
+/* KHARIF 2026 RECOVERY TOGGLE (v30, 26 Nov 2026): the Settings → Seasons
+   switch. Flipping it re-renders every view the gate touches. */
+function renderKh26Toggle(){
+  var on = kharif2026Started();
+  var btn = $("kh26StartBtn"); if(btn) btn.textContent = on ? "✓ Recovery Started — Tap to Hide Again" : "▶ Start Kharif 2026 Recovery";
+  var st = $("kh26Status"); if(st) st.innerHTML = on ? "<b>Status: Started</b> — Kharif 2026 is included in outstanding lists." : "<b>Status: Not started</b> — Kharif 2026 is hidden from outstanding lists.";
+  var note = $("kh26PrintNote"); if(note) note.textContent = on ? "" : "Note: Kharif 2026 is hidden from “All Outstanding” — recovery not started yet. Start it in Settings → Seasons.";
+}
+$("kh26StartBtn").addEventListener("click", function(){
+  lsSetRaw(LS_KH26_STARTED, kharif2026Started() ? "0" : "1");
+  renderKh26Toggle(); refreshLists();
+});
 
 /* ==================== DASHBOARD ==================== */
 function seasonStats(season){
@@ -1550,7 +1583,7 @@ $("lockBtn").addEventListener("click", function(){ lockApp(); });
 $("lockBtnTop").addEventListener("click", function(){ lockApp(); });
 
 /* ==================== APP INSTALL & UPDATE (Settings) ==================== */
-var APP_VERSION = "v29";
+var APP_VERSION = "v30";
 (function(){ var el = $("updStatus"); if(el) el.innerHTML = "<b>Abiana Manager — Version " + APP_VERSION + "</b>"; })();
 var bipEvent = null;   // captured beforeinstallprompt (Chrome install offer)
 window.addEventListener("beforeinstallprompt", function(e){
@@ -2030,9 +2063,13 @@ function chowCountNote(n, lang){
    representative bill of the farmer (from his latest season) — the name /
    Urdu-name source. Shared by the Chowkidar Copy and the Contact Numbers
    list so the two always reconcile with each other and the dashboard. */
-function farmerTotals(){
+function farmerTotals(onlySeason){
   var map = {};
   allBills().forEach(function(b){
+    /* Kharif 2026 recovery toggle (v30): a not-started season stays out of
+       combined totals — unless the caller explicitly asked for that season
+       (pw2Table with a Print Centre season pick). */
+    if(!seasonStarted(b.season_id) && b.season_id !== onlySeason) return;
     var k = b.khata;
     if(!map[k]){ map[k] = { khata:k, rep:null, per:{} }; SEASON_ORDER.forEach(function(sid){ map[k].per[sid] = 0; }); }
     map[k].per[b.season_id] = (map[k].per[b.season_id] || 0) + remaining(b);
@@ -2339,7 +2376,7 @@ function pw2SeasonNote(g, lang){
    "All Outstanding" (seasonId null/undefined) the old cross-season totals
    apply, with the season-count wording under the amount. */
 function pw2Table(lang, seasonId){
-  var rows = farmerTotals().filter(function(g){
+  var rows = farmerTotals(seasonId).filter(function(g){
     return !seasonId || g.per[seasonId] > 0;
   });
   var isUr = lang === "ur";
@@ -2550,6 +2587,7 @@ fixOwner22Oct();
 fixSeededCustomNames();
 buildSeasonOptions();
 setSeason(seasonFilter);
+renderKh26Toggle(); /* Kharif 2026 recovery toggle (v30) */
 fixBuiltinPin().then(function(){ if(!isUnlocked()) showLock(); });
 if("serviceWorker" in navigator && (location.protocol==="http:" || location.protocol==="https:")){
   /* Prompt updates (stale-names fix, 22 Oct 2026): bill data is baked into
