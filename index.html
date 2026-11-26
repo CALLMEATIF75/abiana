@@ -384,7 +384,7 @@ nav button.on .ic{filter:none}
 <header>
   <div class="row">
     <div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5C12 2.5 5.5 10 5.5 15a6.5 6.5 0 0 0 13 0C18.5 10 12 2.5 12 2.5Z" fill="#f59e0b"/></svg></div>
-    <span class="verchip">v30</span>
+    <span class="verchip">v31</span>
     <div>
       <h1>Abiana Manager</h1>
       <div class="sub">Muhammad Atif · Numberdar · Chak 130/1-L</div>
@@ -735,7 +735,7 @@ function seasonStarted(sid){ return sid !== "kharif2026" || kharif2026Started();
 /* Latest season (in SEASON_ORDER) that has a last date, and that date —
    the operative deadline for cross-season prints (Chowkidar Copy, Contact
    Numbers List). Single source of truth: SEASON_LAST_DATE. */
-function latestLastDate(){ for(var i=SEASON_ORDER.length-1;i>=0;i--){ var d=seasonLastDate(SEASON_ORDER[i]); if(d) return d; } return ""; }
+function latestLastDate(){ for(var i=SEASON_ORDER.length-1;i>=0;i--){ var sid=SEASON_ORDER[i]; if(!seasonStarted(sid)) continue; /* Kharif 2026 recovery toggle (v31): a not-started season's date is not the deadline for the listed bills */ var d=seasonLastDate(sid); if(d) return d; } return ""; }
 
 /* WRONG BILLS (Numberdar, 14 Nov 2026): these bills appear in the official
    eAbiana screenshots but are ERRONEOUS — they must never show as baqaya, in
@@ -1583,7 +1583,7 @@ $("lockBtn").addEventListener("click", function(){ lockApp(); });
 $("lockBtnTop").addEventListener("click", function(){ lockApp(); });
 
 /* ==================== APP INSTALL & UPDATE (Settings) ==================== */
-var APP_VERSION = "v30";
+var APP_VERSION = "v31";
 (function(){ var el = $("updStatus"); if(el) el.innerHTML = "<b>Abiana Manager — Version " + APP_VERSION + "</b>"; })();
 var bipEvent = null;   // captured beforeinstallprompt (Chrome install offer)
 window.addEventListener("beforeinstallprompt", function(e){
@@ -2084,6 +2084,12 @@ function farmerTotals(onlySeason){
 
 function printChowkidar(){
   var lang = $("pLang").value, L = LBL[lang];
+  /* v31 (Numberdar, 26 Nov 2026): while Kharif 2026 recovery has not started,
+     its column is all dashes — drop the column entirely from this PDF
+     (header, rows, footer, colgroup), so the chowkidar's copy shows only
+     seasons that actually have dues. When recovery starts, the column
+     comes back automatically. */
+  var showKh26 = seasonStarted("kharif2026");
   var rowsHtml = "", n = 0, gKh25 = 0, gRb26 = 0, gKh26 = 0, gTot = 0;
   farmerTotals().forEach(function(g){
     n++;
@@ -2092,16 +2098,16 @@ function printChowkidar(){
     rowsHtml += '<tr><td>' + n + '</td><td>' + g.khata + '</td><td>' + chowFarmerCell(nb, lang) + '</td><td>' + chowFatherCell(nb, lang) + '</td>'
       + '<td class="num">' + (g.per.kharif2025 ? fmtN(g.per.kharif2025) : '—') + '</td>'
       + '<td class="num">' + (g.per.rabi2026 ? fmtN(g.per.rabi2026) : '—') + '</td>'
-      + '<td class="num">' + (g.per.kharif2026 ? fmtN(g.per.kharif2026) : '—') + '</td>'
+      + (showKh26 ? '<td class="num">' + (g.per.kharif2026 ? fmtN(g.per.kharif2026) : '—') + '</td>' : '')
       + '<td class="num bold">' + fmtN(g.tot) + (g.nSeasons > 2 ? chowCountNote(g.nSeasons, lang) : '') + '</td></tr>';
   });
-  if(!n) rowsHtml = '<tr><td colspan="8" style="text-align:center">—</td></tr>';
+  if(!n) rowsHtml = '<tr><td colspan="' + (showKh26 ? 8 : 7) + '" style="text-align:center">—</td></tr>';
   var corner = lang==="ur"
     ? '<div class="cornerlabel urdu">نقل برائے چوکیدار</div>'
     : lang==="bi"
     ? '<div class="cornerlabel"><span class="urdu" dir="rtl">نقل برائے چوکیدار</span> — COPY FOR CHOWKIDAR</div>'
     : '<div class="cornerlabel">COPY FOR CHOWKIDAR</div>';
-  var seasonsLine = "Kharif 2025 + Rabi 2026 + Kharif 2026";
+  var seasonsLine = showKh26 ? "Kharif 2025 + Rabi 2026 + Kharif 2026" : "Kharif 2025 + Rabi 2026";
   var noteEn = '<div style="font-size:11px;margin-top:8px">Note: Totals include Kharif 2024 and Rabi 2025 dues where applicable.</div>';
   var noteUr = '<div class="urdu" dir="rtl" style="font-size:16px;margin-top:8px">نوٹ: کل بقایا میں جہاں لاگو ہو، خریف 2024 اور ربیع 2025 کا بقایا بھی شامل ہے۔</div>';
   var footnote = lang==="ur" ? noteUr : lang==="bi" ? noteUr + noteEn : noteEn;
@@ -2110,10 +2116,17 @@ function printChowkidar(){
     + '<div class="chowinst urdu" dir="rtl">درج ذیل کاشتکاروں کو مطلع کریں کہ ان کے ذمے آبیانہ کی درج شدہ رقم باقی ہے۔</div>'
     + '<div class="chowline">Last date for payment: ' + esc(longDate(latestLastDate())) + '</div>'
     + '<div class="chowline urdu" dir="rtl">آخری تاریخ: ' + esc(urLongDate(latestLastDate())) + '</div>'
-    + '<table class="chow"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:22%"><col style="width:19%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:16%"></colgroup><thead><tr><th>' + esc(L.sr) + '</th><th>' + esc(L.khata) + '</th><th>' + esc(L.farmer) + '</th><th>' + esc(L.father) + '</th>'
-    + '<th class="num">' + esc(chowSeasonLabel("kharif2025", lang)) + '</th><th class="num">' + esc(chowSeasonLabel("rabi2026", lang)) + '</th><th class="num">' + esc(chowSeasonLabel("kharif2026", lang)) + '</th><th class="num">' + esc(L.totB) + '</th></tr></thead><tbody>'
+    + '<table class="chow"><colgroup>' + (showKh26
+      ? '<col style="width:4%"><col style="width:6%"><col style="width:22%"><col style="width:19%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:16%">'
+      : '<col style="width:4%"><col style="width:6%"><col style="width:24%"><col style="width:21%"><col style="width:12%"><col style="width:12%"><col style="width:21%">')
+    + '</colgroup><thead><tr><th>' + esc(L.sr) + '</th><th>' + esc(L.khata) + '</th><th>' + esc(L.farmer) + '</th><th>' + esc(L.father) + '</th>'
+    + '<th class="num">' + esc(chowSeasonLabel("kharif2025", lang)) + '</th><th class="num">' + esc(chowSeasonLabel("rabi2026", lang)) + '</th>'
+    + (showKh26 ? '<th class="num">' + esc(chowSeasonLabel("kharif2026", lang)) + '</th>' : '')
+    + '<th class="num">' + esc(L.totB) + '</th></tr></thead><tbody>'
     + rowsHtml
-    + '<tr class="tot"><td colspan="4">' + esc(L.total) + ' (' + n + ')</td><td class="num">' + fmtN(gKh25) + '</td><td class="num">' + fmtN(gRb26) + '</td><td class="num">' + fmtN(gKh26) + '</td><td class="num">' + fmtN(gTot) + '</td></tr></tbody></table>'
+    + '<tr class="tot"><td colspan="4">' + esc(L.total) + ' (' + n + ')</td><td class="num">' + fmtN(gKh25) + '</td><td class="num">' + fmtN(gRb26) + '</td>'
+    + (showKh26 ? '<td class="num">' + fmtN(gKh26) + '</td>' : '')
+    + '<td class="num">' + fmtN(gTot) + '</td></tr></tbody></table>'
     + footnote
     + sigBlock(lang) + docFoot(lang==="ur" ? "نقل برائے چوکیدار — بقایا آبیانہ کی فہرست" : "COPY FOR CHOWKIDAR — Outstanding Abiana List");
   doPrint(h, lang);
